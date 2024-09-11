@@ -1,7 +1,7 @@
 #include <iostream>
 using namespace std;
 
-void displayAscii() {
+void displayASCII() {
     std::cout << R"(
  .----------------.  .----------------.  .----------------.  .----------------.  .----------------.  .----------------.  .----------------. 
 | .--------------. || .--------------. || .--------------. || .--------------. || .--------------. || .--------------. || .--------------. |
@@ -24,14 +24,14 @@ void initialize (){
 void screen (){
 
 }
-void scheduler_test (){
+void schedulerTest (){
 
 }
-void scheduler_stop (){
+void schedulerStop (){
 
 }
 
-void report_util() {
+void reportUtil() {
 
 }
 
