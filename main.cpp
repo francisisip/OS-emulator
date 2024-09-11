@@ -25,62 +25,67 @@ void displayASCII() {
 }
 
 void initialize (){
-	std::cout << "initialize command recognized. Doing something" << std::endl;
+	std::cout << "initialize command recognized. Doing something\n" << std::endl;
 }
 
 void screen (){
-    std::cout << "screen command recognized. Doing something" << std::endl;
+    std::cout << "screen command recognized. Doing something\n" << std::endl;
 }
 void schedulerTest (){
-    std::cout << "scheduler-test command recognized. Doing something" << std::endl;
+    std::cout << "scheduler-test command recognized. Doing something\n" << std::endl;
 }
 void schedulerStop (){
-    std::cout << "scheduler-stop command recognized. Doing something" << std::endl;
+    std::cout << "scheduler-stop command recognized. Doing something\n" << std::endl;
 }
 
 void reportUtil() {
-    std::cout << "report-util command recognized. Doing something" << std::endl;
+    std::cout << "report-util command recognized. Doing something\n" << std::endl;
 }
 
 void clear() {
-    std::cout << "clear command recognized. Doing something" << std::endl;
     system("cls");
 	displayASCII();
 }
 
-void exit() {
-
+void exit(bool* flag) {
+	*flag = 0;
 }
+
 int main() {
 
     displayASCII();
+	bool running = true;
 
-    std::string name;
-	std::getline(std::cin, name);
+	while (running) {
+		std::cout << "Enter Command: ";
 
-	if (name == "initialize") {
-		initialize();
-	}
-	else if (name == "screen") {
-		screen();
-	}
-	else if (name == "scheduler-test") {
-		schedulerTest();
-	}
-	else if (name == "scheduler-stop") {
-		schedulerStop();
-	}
-	else if (name == "report-util") {
-		reportUtil();
-	}
-	else if (name == "clear") {
-		clear();
-	}
-	else if (name == "exit") {
-		exit();
-	}
-	else {
-		std::cout << "Command not recognized" << std::endl;
+		std::string name;
+		std::getline(std::cin, name);
+
+		if (name == "initialize") {
+			initialize();
+		}
+		else if (name == "screen") {
+			screen();
+		}
+		else if (name == "scheduler-test") {
+			schedulerTest();
+		}
+		else if (name == "scheduler-stop") {
+			schedulerStop();
+		}
+		else if (name == "report-util") {
+			reportUtil();
+		}
+		else if (name == "clear") {
+			clear();
+		}
+		else if (name == "exit") {
+			exit(&running);
+		}
+		else {
+			std::cout << "Command not recognized\n" << std::endl;
+		}
 	}
 
     return 0;
