@@ -6,22 +6,34 @@ class Screen {
 private:
     std::string screenName;
     Process process;
-    std::vector<std::string> stringList;
+    std::vector<std::string> instructions;
 
 // TODO: add methods
 public:
     Screen(): screenName("Main") {
         displayASCII();
-        process;
     }
 
-    Screen(std::string& name): screenName(screenName) {
-        displayASCII();
+    Screen(const std::string& name) : screenName(name) {
         process.setProcessName(screenName);
+    }
+
+    std::string getScreenName() {
+        return screenName;
     }
 
     void printProcessInfo() {
         process.printDummyInfo();
+    }
+
+    void storeInstructions(const std::string& command) {
+        instructions.push_back(command);
+    }
+
+    void printInstructions() {
+        for (size_t i = 0; i < instructions.size(); ++i) {
+        std::cout << instructions[i] << std::endl;
+    }
     }
 
     void displayASCII() {
@@ -37,7 +49,7 @@ public:
     )";
 
         std::cout << "Hello, welcome to CSOPESY commandline!" << '\n';
-        std::cout << "Type 'exit' to quit, 'clear' to clear the screen" << '\n';
+        std::cout << "Type 'exit' to quit, 'clear' to clear the screen\n" << '\n';
     }
 
     void initialize (){
@@ -60,6 +72,9 @@ public:
 
     void clear() {
         system("cls");
-        displayASCII();
+
+        if (screenName == "Main") {
+            displayASCII();
+        }
     }
 };

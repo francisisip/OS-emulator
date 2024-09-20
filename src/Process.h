@@ -26,7 +26,7 @@ public:
     void printDummyInfo() {
         std::cout << processName << std::endl;
         std::cout << instruction << std::endl;
-        std::cout << timestamp << std::endl;
+        std::cout << timestamp << "\n" << std::endl;
     }
 
 };
