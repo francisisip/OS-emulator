@@ -31,10 +31,8 @@ public:
     }
 
     void printInstructions() {
-        displayASCII();
-
         for (size_t i = 0; i < instructions.size(); ++i) {
-            std::cout << "root@csopesy:~$ " << instructions[i] << "\n" << std::endl;
+            std::cout << screenName << "@csopesy:~$ " << instructions[i] << "\n" << std::endl;
         }
     }
 
