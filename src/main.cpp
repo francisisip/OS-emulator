@@ -2,7 +2,11 @@
 #include <stdlib.h>
 #include <string>
 #include <cstdio>
+
+#include <Process.h>
+#include <Screen.h>
 using namespace std;
+
 
 void displayASCII() {
     std::cout << R"(
