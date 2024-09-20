@@ -3,49 +3,9 @@
 #include <string>
 #include <cstdio>
 
-#include <Process.h>
-#include <Screen.h>
+#include "Screen.h"
 using namespace std;
 
-
-void displayASCII() {
-    std::cout << R"(
- $$$$$$\   $$$$$$\   $$$$$$\  $$$$$$$\  $$$$$$$$\  $$$$$$\ $$\     $$\ 
-$$  __$$\ $$  __$$\ $$  __$$\ $$  __$$\ $$  _____|$$  __$$\\$$\   $$  |
-$$ /  \__|$$ /  \__|$$ /  $$ |$$ |  $$ |$$ |      $$ /  \__|\$$\ $$  / 
-$$ |      \$$$$$$\  $$ |  $$ |$$$$$$$  |$$$$$\    \$$$$$$\   \$$$$  /  
-$$ |       \____$$\ $$ |  $$ |$$  ____/ $$  __|    \____$$\   \$$  /   
-$$ |  $$\ $$\   $$ |$$ |  $$ |$$ |      $$ |      $$\   $$ |   $$ |    
-\$$$$$$  |\$$$$$$  | $$$$$$  |$$ |      $$$$$$$$\ \$$$$$$  |   $$ |    
- \______/  \______/  \______/ \__|      \________| \______/    \__|    
-)";
-
-    std::cout << "Hello, welcome to CSOPESY commandline!" << '\n';
-    std::cout << "Type 'exit' to quit, 'clear' to clear the screen" << '\n';
-}
-
-void initialize (){
-	std::cout << "initialize command recognized. Doing something\n" << std::endl;
-}
-
-void screen (){
-    std::cout << "screen command recognized. Doing something\n" << std::endl;
-}
-void schedulerTest (){
-    std::cout << "scheduler-test command recognized. Doing something\n" << std::endl;
-}
-void schedulerStop (){
-    std::cout << "scheduler-stop command recognized. Doing something\n" << std::endl;
-}
-
-void reportUtil() {
-    std::cout << "report-util command recognized. Doing something\n" << std::endl;
-}
-
-void clear() {
-    system("cls");
-	displayASCII();
-}
 
 void exit(bool* flag) {
 	*flag = 0;
@@ -53,35 +13,37 @@ void exit(bool* flag) {
 
 int main() {
 
-    displayASCII();
-	bool running = true;
+	// initialization
+	Screen mainScreen;
+	std::vector<Screen> screens;
+	bool osRunning = true;
 
-	while (running) {
+	while (osRunning) {
 		std::cout << "Enter Command: ";
 
 		std::string name;
 		std::getline(std::cin, name);
 
 		if (name == "initialize") {
-			initialize();
+			mainScreen.initialize();
 		}
 		else if (name == "screen") {
-			screen();
+			mainScreen.screen();
 		}
 		else if (name == "scheduler-test") {
-			schedulerTest();
+			mainScreen.schedulerTest();
 		}
 		else if (name == "scheduler-stop") {
-			schedulerStop();
+			mainScreen.schedulerStop();
 		}
 		else if (name == "report-util") {
-			reportUtil();
+			mainScreen.reportUtil();
 		}
 		else if (name == "clear") {
-			clear();
+			mainScreen.clear();
 		}
 		else if (name == "exit") {
-			exit(&running);
+			exit(&osRunning);
 		}
 		else {
 			std::cout << "Command not recognized\n" << std::endl;
