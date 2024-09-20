@@ -31,9 +31,11 @@ public:
     }
 
     void printInstructions() {
+        displayASCII();
+
         for (size_t i = 0; i < instructions.size(); ++i) {
-        std::cout << instructions[i] << std::endl;
-    }
+            std::cout << "root@csopesy:~$ " << instructions[i] << "\n" << std::endl;
+        }
     }
 
     void displayASCII() {
@@ -71,6 +73,7 @@ public:
     }
 
     void clear() {
+        instructions.clear();
         system("cls");
 
         if (screenName == "Main") {

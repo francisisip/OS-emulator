@@ -25,7 +25,6 @@ int main() {
 		std::string command;
 		std::getline(std::cin, command);
 		mainScreen.storeInstructions(command);
-		mainScreen.printInstructions();
 
 		// parse command and get word count
 		std::istringstream iss(command);
@@ -61,7 +60,8 @@ int main() {
 					}
 					else if (command == "exit") {
 						exit(&processRunning);
-						mainScreen.clear();
+						system("cls");
+						mainScreen.printInstructions();
 					}
 					else {
 						std::cout << "Command not recognized\n" << std::endl;
