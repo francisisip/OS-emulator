@@ -1,32 +1,38 @@
 #include <iostream>
+#include <ctime>
+#include <iomanip>
+#include <sstream>
 
 class Process {
 private:
     std::string processName;
     std::string instruction;
-    std::string timestamp; //TODO: change to actual time data type
-
+    std::string formattedTime;
 // TODO: add methods
 public:
 
     Process() {
-        setDummyInfo(); // remove once actual data is available
+        formattedTime = getFormattedTime();
+        instruction = "7 / 100";
     }
 
     void setProcessName(const std::string& name) {
         processName = name;
     }
 
-    // reemove once actual data is available
-    void setDummyInfo() {
-        instruction = "7 / 100";
-        timestamp = "2024-09-20 11:43 AM";
+    std::string getFormattedTime() {
+        std::time_t currentTime = std::time(nullptr);
+        std::tm* localTime = std::localtime(&currentTime);
+        std::stringstream ss;
+        ss << std::put_time(localTime, "%m/%d/%Y, %I:%M:%S ");
+        ss << (localTime->tm_hour >= 12 ? "PM" : "AM");
+        return ss.str();
     }
     
     void printDummyInfo() {
         std::cout << processName << std::endl;
         std::cout << instruction << std::endl;
-        std::cout << timestamp << "\n" << std::endl;
+        std::cout << formattedTime << "\n" << std::endl;
     }
 
 };
