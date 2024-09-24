@@ -7,16 +7,42 @@
 #include "Screen.h"
 using namespace std;
 
+// initialization
+Screen mainScreen;
+std::vector<Screen> screens;
 
 void exit(bool* flag) {
 	*flag = 0;
 }
 
+void enterSubScreen(Screen* currentScreen) {
+	bool processRunning = true;
+
+	while (processRunning) {
+		std::cout << currentScreen->getScreenName() << "@csopesy:~$ ";
+
+		std::string command;
+		std::getline(std::cin, command);
+		currentScreen->storeInstructions(command);
+
+		if (command == "clear") {
+			currentScreen->clear();
+		}
+		else if (command == "exit") {
+			exit(&processRunning);
+			system("cls");
+			mainScreen.displayASCII();
+			mainScreen.printInstructions();
+		}
+		else {
+			std::cout << "Command not recognized\n" << std::endl;
+		}
+	}
+}
+
+
 int main() {
 
-	// initialization
-	Screen mainScreen;
-	std::vector<Screen> screens;
 	bool osRunning = true;
 
 	while (osRunning) {
@@ -36,39 +62,15 @@ int main() {
 			wordCount++;
 		}
 
-		// for 2 or more wordscl
-		if (wordCount > 1) {
+		if (wordCount == 3) {
 			std::string instruction, option, param;
 		    iss >> instruction >> option >> param;
 			
 			if (instruction == "screen" && option == "-s") {
-				//std::cout << "Screen command recognized. Doing somethingw" << std::endl;
-				bool processRunning = true;
-
 				screens.push_back(Screen(param));
 				system("cls");
 				screens.back().printProcessInfo();
-
-				while (processRunning) {
-					std::cout << screens.back().getScreenName() << "@csopesy:~$ ";
-
-					std::string command;
-					std::getline(std::cin, command);
-					screens.back().storeInstructions(command);
-
-					if (command == "clear") {
-						screens.back().clear();
-					}
-					else if (command == "exit") {
-						exit(&processRunning);
-						system("cls");
-						mainScreen.displayASCII();
-						mainScreen.printInstructions();
-					}
-					else {
-						std::cout << "Command not recognized\n" << std::endl;
-					}
-				}
+				enterSubScreen(&screens.back());	
 			}
 			else if (instruction == "screen" && option == "-r") {
 				Screen* currentScreen = nullptr;
@@ -78,36 +80,14 @@ int main() {
 						break;
 					}
 				}
-
 				if (currentScreen == nullptr) {
 					std::cout << "Screen not found\n" << std::endl;
 				}
 				else {
-					bool processRunning = true;
 					system("cls");
 					currentScreen->printProcessInfo();
 					currentScreen->printInstructions();
-
-					while (processRunning) {
-						std::cout << currentScreen->getScreenName() << "@csopesy:~$ ";
-
-						std::string command;
-						std::getline(std::cin, command);
-						currentScreen->storeInstructions(command);
-
-						if (command == "clear") {
-							currentScreen->clear();
-						}
-						else if (command == "exit") {
-							exit(&processRunning);
-							system("cls");
-							mainScreen.displayASCII();
-							mainScreen.printInstructions();
-						}
-						else {
-							std::cout << "Command not recognized\n" << std::endl;
-						}
-					}
+					enterSubScreen(currentScreen);
 				}
 			}
 			else {
@@ -140,9 +120,10 @@ int main() {
 				std::cout << "Command not recognized\n" << std::endl;
 			}
 		}
+		else {
+			std::cout << "Command not recognized\n" << std::endl;
+		}	
 	}
-
-	
 
     return 0;
 }
