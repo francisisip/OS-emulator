@@ -10,15 +10,14 @@ private:
 
 // TODO: add methods
 public:
-    Screen(): screenName("Main") {
-        displayASCII();
+    Screen() {
     }
 
     Screen(const std::string& name) : screenName(name) {
         process.setProcessName(screenName);
     }
 
-    std::string getScreenName() {
+    std::string getScreenName() const {
         return screenName;
     }
 

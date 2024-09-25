@@ -4,12 +4,11 @@
 #include <cstdio>
 #include <sstream>
 
-#include "Screen.h"
+#include "ScreenManager.h"
 using namespace std;
 
-// initialization
+ScreenManager manager;
 Screen mainScreen;
-std::vector<Screen> screens;
 
 void exit(bool* flag) {
 	*flag = 0;
@@ -42,6 +41,9 @@ void enterSubScreen(Screen* currentScreen) {
 
 
 int main() {
+	manager.createScreen("Main");
+	mainScreen = manager.getScreens().back();
+	mainScreen.displayASCII();
 
 	bool osRunning = true;
 
@@ -67,19 +69,15 @@ int main() {
 		    iss >> instruction >> option >> param;
 			
 			if (instruction == "screen" && option == "-s") {
-				screens.push_back(Screen(param));
+				manager.createScreen(param);
 				system("cls");
-				screens.back().printProcessInfo();
-				enterSubScreen(&screens.back());	
+				Screen* curr = &manager.getScreens().back();
+				curr->printProcessInfo();
+				enterSubScreen(curr);
 			}
 			else if (instruction == "screen" && option == "-r") {
-				Screen* currentScreen = nullptr;
-				for (int i = 0; i < screens.size(); ++i) {
-					if (screens[i].getScreenName() == param) {
-						currentScreen = &screens[i];
-						break;
-					}
-				}
+				Screen* currentScreen = manager.findScreenByName(param);
+
 				if (currentScreen == nullptr) {
 					std::cout << "Screen not found\n" << std::endl;
 				}
