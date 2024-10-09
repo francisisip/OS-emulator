@@ -15,13 +15,16 @@ public:
 
 	void run();
 	void switchScreen(const std::string& name);
+	void switchScreenBack();
 	void createProcessScreen(const std::string& name);
 	bool ifProcessScreenExists(const std::string& name);
 
 private:
 	ConsoleManager();
 	~ConsoleManager();
-	ConsoleManager& operator=(ConsoleManager const&) {};
+	ConsoleManager& operator=(ConsoleManager const&) {
+		return *this;
+	};
 	static ConsoleManager* instance;
 
 	std::unordered_map<std::string, int> consoleNameTracker;
