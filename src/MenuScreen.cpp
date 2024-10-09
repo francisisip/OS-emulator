@@ -68,7 +68,7 @@ void MenuScreen::handleInput(std::string command) {
 
 		if (instruction == "screen" && option == "-s") {
 			instance->createProcessScreen(param);
-			instance->switchScreen(param);
+			instance->switchScreen("P_" + param);
 		}
 		else if (instruction == "screen" && option == "-r") {
 			bool flag = instance->ifProcessScreenExists("P_" + param);

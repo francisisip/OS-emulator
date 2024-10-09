@@ -8,7 +8,8 @@ ProcessScreen::~ProcessScreen() {
 }
 
 void ProcessScreen::onExecute() {
-
+    display();
+    process();
 }
 
 void ProcessScreen::display() {
