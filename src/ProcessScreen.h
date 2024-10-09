@@ -15,4 +15,5 @@ public:
 private:
 	std::shared_ptr<Process> currentProcess;
 	void handleInput(std::string command);
+	
 };

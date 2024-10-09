@@ -6,7 +6,7 @@
 #include "MenuScreen.h"
 #include "ConsoleManager.h"
 
-ConsoleManager* instance = ConsoleManager::getInstance();
+ConsoleManager* instance;
 
 MenuScreen::MenuScreen(): AConsole("MAIN_MENU") {
 
@@ -17,12 +17,17 @@ MenuScreen::~MenuScreen() {
 }
 
 void MenuScreen::onExecute() {
+	system("cls");
+	instance = ConsoleManager::getInstance();
 	display();
 	process();
 }
 
 void MenuScreen::display() {
 	displayASCII();
+	for (int i = 0; i < commandHistory.size(); ++i) {
+        std::cout << "root@csopesy:~$ " << commandHistory[i] << std::endl;
+	}
 }
 
 void MenuScreen::process() {
@@ -32,6 +37,7 @@ void MenuScreen::process() {
 
 		std::string command;
 		std::getline(std::cin, command);
+		commandHistory.push_back(command);
 		handleInput(command);
 	}
 }
@@ -74,6 +80,7 @@ void MenuScreen::handleInput(std::string command) {
 			bool flag = instance->ifProcessScreenExists("P_" + param);
 
 			if (!flag) {
+				commandHistory.back() += "\nScreen not found\n";
 				std::cout << "Screen not found\n" << std::endl;
 			}
 			else {
@@ -81,6 +88,7 @@ void MenuScreen::handleInput(std::string command) {
 			}
 		}
 		else {
+			commandHistory.back() += "\nCommand not recognized\n";
 			std::cout << "Command not recognized\n" << std::endl;
 		}
 	}
@@ -98,16 +106,19 @@ void MenuScreen::handleInput(std::string command) {
 			std::cout << "report-util command recognized. Doing something\n" << std::endl;
 		}
 		else if (command == "clear") {
+			commandHistory.clear();
 			system("cls");
 		}
 		else if (command == "exit") {
 			exit(0);
 		}
 		else {
+			commandHistory.back() += "\nCommand not recognized\n";
 			std::cout << "Command not recognized\n" << std::endl;
 		}
 	}
-	else {
+	else if (wordCount != 0) {
+		commandHistory.back() += "\nCommand not recognized\n";
 		std::cout << "Command not recognized\n" << std::endl;
 	}
 }

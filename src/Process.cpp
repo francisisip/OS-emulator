@@ -5,5 +5,5 @@ Process::Process(std::string name) {
 }
 
 std::string Process::getName() {
-	return this->name;
+	return name;
 }

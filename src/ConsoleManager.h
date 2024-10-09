@@ -22,9 +22,7 @@ public:
 private:
 	ConsoleManager();
 	~ConsoleManager();
-	ConsoleManager& operator=(ConsoleManager const&) {
-		return *this;
-	};
+	ConsoleManager& operator=(ConsoleManager const&) {return *this;};
 	static ConsoleManager* instance;
 
 	std::unordered_map<std::string, int> consoleNameTracker;
