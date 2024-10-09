@@ -33,16 +33,17 @@ void ConsoleManager::run() {
 void ConsoleManager::createProcessScreen(const std::string& baseName) {
     std::string newName = "P_" + baseName;
     if (consoles.find(newName) != consoles.end()){
-        int& count = consoleNameTracker[baseName];
+        int* count = &consoleNameTracker[newName];
 
         do {
-            newName = "P_" + baseName + "-" + std::to_string(count);
-            count++;
+            newName = "P_" + baseName + "-" + std::to_string(*count);
+            (*count)++;
         } while (consoles.find(newName) != consoles.end());
     }
     
     consoles[newName] = std::make_shared<ProcessScreen>(std::make_shared<Process>(newName));
     consoleNameTracker[newName] = 1;
+    switchScreen(newName);
 }
 
 void ConsoleManager::switchScreen(const std::string& name) {

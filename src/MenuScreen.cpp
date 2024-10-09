@@ -27,6 +27,9 @@ void MenuScreen::display() {
 	displayASCII();
 	for (int i = 0; i < commandHistory.size(); ++i) {
         std::cout << "root@csopesy:~$ " << commandHistory[i] << std::endl;
+		if (!commandHistory[i].empty()) {
+			std::cout << "\n";
+		}
 	}
 }
 
@@ -74,13 +77,12 @@ void MenuScreen::handleInput(std::string command) {
 
 		if (instruction == "screen" && option == "-s") {
 			instance->createProcessScreen(param);
-			instance->switchScreen("P_" + param);
 		}
 		else if (instruction == "screen" && option == "-r") {
 			bool flag = instance->ifProcessScreenExists("P_" + param);
 
 			if (!flag) {
-				commandHistory.back() += "\nScreen not found\n";
+				commandHistory.back() += "\nScreen not found";
 				std::cout << "Screen not found\n" << std::endl;
 			}
 			else {
@@ -88,7 +90,7 @@ void MenuScreen::handleInput(std::string command) {
 			}
 		}
 		else {
-			commandHistory.back() += "\nCommand not recognized\n";
+			commandHistory.back() += "\nCommand not recognized";
 			std::cout << "Command not recognized\n" << std::endl;
 		}
 	}
@@ -113,12 +115,12 @@ void MenuScreen::handleInput(std::string command) {
 			exit(0);
 		}
 		else {
-			commandHistory.back() += "\nCommand not recognized\n";
+			commandHistory.back() += "\nCommand not recognized";
 			std::cout << "Command not recognized\n" << std::endl;
 		}
 	}
 	else if (wordCount != 0) {
-		commandHistory.back() += "\nCommand not recognized\n";
+		commandHistory.back() += "\nCommand not recognized";
 		std::cout << "Command not recognized\n" << std::endl;
 	}
 }

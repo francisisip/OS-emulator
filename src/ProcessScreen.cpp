@@ -7,7 +7,7 @@
 
 ConsoleManager* currentInstance;
 
-ProcessScreen::ProcessScreen(std::shared_ptr<Process> process): AConsole("P_" + process->getName()) {
+ProcessScreen::ProcessScreen(std::shared_ptr<Process> process): AConsole(process->getName()) {
     currentProcess = process;
     currentInstance = ConsoleManager::getInstance();
 }
@@ -38,6 +38,9 @@ void ProcessScreen::display() {
 
     for (int i = 0; i < commandHistory.size(); ++i) {
         std::cout << "root@csopesy:~$ " << commandHistory[i] << std::endl;
+        if (!commandHistory[i].empty()) {
+			std::cout << "\n";
+		}
 	}
 }
 
@@ -72,12 +75,12 @@ void ProcessScreen::handleInput(std::string command) {
             currentInstance->switchScreenBack();
         }
         else {
-            commandHistory.back() += "\nCommand not recognized\n";
+            commandHistory.back() += "\nCommand not recognized";
             std::cout << "Command not recognized\n" << std::endl;
         }
     }
     else if (wordCount != 0) {
-        commandHistory.back() += "\nCommand not recognized\n";
+        commandHistory.back() += "\nCommand not recognized";
         std::cout << "Command not recognized\n" << std::endl;
     }
 }
