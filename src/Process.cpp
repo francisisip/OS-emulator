@@ -1,2 +1,9 @@
 #include "Process.h"
-#include <string>
+
+Process::Process(std::string name) {
+	this->name = name;
+}
+
+std::string Process::getName() {
+	return this->name;
+}
