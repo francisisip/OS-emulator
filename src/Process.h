@@ -1,5 +1,8 @@
 #pragma once
+#include <vector>
+#include <chrono>
 #include <string>
+#include "ICommand.h"
 
 class Process {
 public:
@@ -10,23 +13,35 @@ public:
 		WAITING,
 		FINISHED
 	};
-
 	Process(std::string name);
+
+	// Getters
+	int getPId() const;
+	std::string getName() const;
+	int getCPUCoreID() const;
+	ProcessState getState() const;
+	std::string getTimeCreated() const;
+	int getCommandCounter() const; // might be unnecessary
+	int getCommandCount() const;
+	bool isFinished() const;
+	
+
+	int getLinesOfCode() const; // what is this for?
 
 	void executeCurrentCommand();
 	void moveToNextLine();
 
-	bool isFinished();	
-	int getCommandCounter();
-	int getLinesOfCode();
-	int getCPUCoreID();
-	ProcessState getState();
-	std::string getName();
 
 private:
+	int pid;
 	std::string name;
+	typedef std::vector<std::shared_ptr<ICommand>> CommandList;
+	CommandList commandList;
 
-	int commandCounter;
 	int cpuCoreID = -1;
 	ProcessState currentState;
+	std::chrono::system_clock::time_point timeCreated;
+	int commandCounter; // indicate current command
+	int commandCount; // total no. of commands
+	bool finished;
 };

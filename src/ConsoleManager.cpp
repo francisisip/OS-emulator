@@ -56,7 +56,7 @@ void ConsoleManager::switchScreenBack() {
     auto temp = currentConsole;
     currentConsole = previousConsole;
     previousConsole = temp;
-    system("cls");
+    system("clear");
     currentConsole->onExecute();
 }
 
