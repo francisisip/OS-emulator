@@ -1,5 +1,6 @@
 #pragma once
 #include <string.h>
+#include <iostream>
 class ICommand
 {
 public:
@@ -8,10 +9,12 @@ public:
         PRINT
     };
 
-    ICommand(CommandType type);
+    ICommand(int pid, CommandType type);
     CommandType getCommandType();
     virtual void execute();
 
 protected:
+    int pid;
     CommandType CommandType;
+    
 };
