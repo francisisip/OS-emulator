@@ -3,3 +3,5 @@
 main
 .exe
 /src/*.exe
+.DS_Store
+.vs
