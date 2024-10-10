@@ -31,6 +31,7 @@ void CPUCoreWorker::runProcess(){
 void CPUCoreWorker::setCurrentProcess(std::shared_ptr<Process> process){
     // TODO: public method to set the current process stored in this CPU to the process. handled by scheduler
     currentProcess = process;
+    assignedProcess = true;
 }
 
 bool CPUCoreWorker::hasCurrentProcess(){
