@@ -5,6 +5,12 @@ Process::Process(std::string name) {
 	this->name = name;
 }
 
+Process::Process(std::string name, int commandCount){
+	this->name = name;
+	this->commandCount = commandCount;
+	this->commandCounter = 0;
+}
+
 int Process::getPId() const {
 	return pid;
 }
@@ -34,12 +40,13 @@ int Process::getCommandCount() const {
 };
 
 bool Process::isFinished() const {
-	return isFinished;
+	return finished;
 }
 
 
 void Process::executeCurrentCommand() {
-	return;
+	std::cout << "Hello world from " << this->name << std::endl;
+	moveToNextLine();
 }
 
 void Process::moveToNextLine() {
