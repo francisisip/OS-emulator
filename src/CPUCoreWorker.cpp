@@ -1,11 +1,12 @@
 #include "CPUCoreWorker.h"
 
+
 void CPUCoreWorker::initialize() {
     // initialize a new thread for this CPU
     // NOTES use isFinished in Process 
     running = true;
     // add a thread that does a function
-    coreThread = std::thread(CPUCoreWorker::runCoreWorker, this);
+    coreThread = std::thread(&CPUCoreWorker::runCoreWorker, this);
     // REMEMBER: process allocation will be handled by the scheduler
 
 }
@@ -16,12 +17,13 @@ void CPUCoreWorker::runCoreWorker(){
             runProcess();
         }
         totalCPUTicks++;
+        break;
     }
 }
 
 void CPUCoreWorker::runProcess(){
     // FCFS
-    for(int i = 0; i < currentProcess->getLinesOfCode(); i++){
+    for(int i = 0; i < currentProcess->getCommandCount(); i++){
         currentProcess->executeCurrentCommand();
     }
     currentProcess.reset();
