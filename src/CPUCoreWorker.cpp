@@ -15,6 +15,7 @@ void CPUCoreWorker::initialize() {
 }
 
 int CPUCoreWorker::getCoreId() {
+    std::lock_guard<std::mutex> lock(coreMutex);
     return coreId;
 }
 
@@ -24,7 +25,6 @@ void CPUCoreWorker::runCoreWorker(){
             runProcess();
         }
         totalCPUTicks++;
-        break;
     }
 }
 
@@ -38,12 +38,14 @@ void CPUCoreWorker::runProcess(){
 }
 
 void CPUCoreWorker::setCurrentProcess(std::shared_ptr<Process> process){
+    std::lock_guard<std::mutex> lock(coreMutex);
     // TODO: public method to set the current process stored in this CPU to the process. handled by scheduler
     currentProcess = process;
     assignedProcess = true;
 }
 
 bool CPUCoreWorker::hasCurrentProcess(){
+    std::lock_guard<std::mutex> lock(coreMutex);
     // TODO: check if there is a process assigned
     return assignedProcess;
 }

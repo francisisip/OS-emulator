@@ -6,7 +6,7 @@ class CPUCoreWorker
 {
 public:
     CPUCoreWorker(int coreId);
-    ~CPUCoreWorker();
+    // ~CPUCoreWorker();
     // initializes the core worker, runs the runCoreWorker command 
     void initialize();
     // Get coreId
@@ -27,7 +27,7 @@ private:
     bool running;
     bool assignedProcess;
     std::shared_ptr<Process> currentProcess; // if empty, hasCurrentProcess is false
-
+    std::mutex coreMutex;
     int totalCPUTicks = 0; // 1 cpu tick = 1 instruction line
 
 };
