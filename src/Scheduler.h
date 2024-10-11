@@ -19,7 +19,6 @@ public:
 
     // Initialize the scheduler
     void initialize();
-
     // Initialize all the cores within the scheduler
     void initializeCores(int numCores);
 
@@ -29,6 +28,7 @@ public:
     const std::vector<std::unique_ptr<CPUCoreWorker>>& getCoreList() const;
     const std::vector<std::shared_ptr<Process>>& getProcessList() const;
 
+    void printSchedulerStatus();
 private:
     bool running;
     std::vector<std::unique_ptr<CPUCoreWorker>> coreList;

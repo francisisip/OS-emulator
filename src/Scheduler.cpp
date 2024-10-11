@@ -1,5 +1,6 @@
 #pragma once
 #include "Scheduler.h"
+#include <iomanip>
 
 Scheduler::Scheduler() {
     // TODO: add constructor logic
@@ -70,4 +71,39 @@ const std::vector<std::unique_ptr<CPUCoreWorker>>& Scheduler::getCoreList() cons
 
 const std::vector<std::shared_ptr<Process>>& Scheduler::getProcessList() const {
     return processList;
+}
+
+void Scheduler::printSchedulerStatus(){
+    	std::cout << "--------------------------------------------\n";
+	std::cout << "Running processes:\n";
+	const std::vector<std::shared_ptr<Process>>& processes = this->getProcessList();
+	for (const auto& process : processes) {
+		if (!process->isFinished()) {
+			std::cout << std::left << std::setw(20) << process->getName()
+				<< std::left << std::setw(30) << process->getTimeCreated();
+
+			// Check if the process has been assigned a core
+			if (process->getCPUCoreID() != -1) {
+				std::cout << "Core:   " << std::setw(15) << process->getCPUCoreID();
+				std::cout << std::left << std::setw(1) << process->getCommandCounter() << " / "
+					<< process->getCommandCount() << "\n";
+			}
+			else {
+				std::cout << "Core:   " << std::setw(15) << " "; // Adjust the width to maintain alignment
+				std::cout << std::left << std::setw(1) << process->getCommandCounter() << " / "
+					<< process->getCommandCount() << "\n";
+			}
+		}
+	}
+
+	std::cout << "\nFinished processes:\n";
+	for (const auto& process : processes) {
+		if (process->isFinished()) {
+			std::cout << std::left << std::setw(20) << process->getName()
+				<< std::left << std::setw(30) << process->getTimeCreated()
+				<< "Core:   " << std::setw(15) << process->getCPUCoreID()
+				<< std::left << std::setw(1) << process->getCommandCounter() << " / "
+				<< process->getCommandCount() << "\n";
+		}
+	}
 }
