@@ -6,7 +6,7 @@ class CPUCoreWorker
 {
 public:
     CPUCoreWorker(int coreId);
-    // ~CPUCoreWorker();
+    ~CPUCoreWorker();
     // initializes the core worker, runs the runCoreWorker command 
     void initialize();
     // Get coreId
@@ -21,7 +21,7 @@ private:
     // runs the current process assigned
     void runProcess();
     void runCoreWorker();
-    
+    void stop();
     int coreId;
     std::thread coreThread;
     bool running;

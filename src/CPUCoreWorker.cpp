@@ -4,6 +4,12 @@ CPUCoreWorker::CPUCoreWorker(int coreId){
     this->coreId = coreId;
 }
 
+CPUCoreWorker::~CPUCoreWorker() {
+    stop();
+    if (coreThread.joinable()) {
+        coreThread.join();
+    }
+}
 void CPUCoreWorker::initialize() {
     // initialize a new thread for this CPU
     // NOTES use isFinished in Process 
@@ -48,4 +54,15 @@ bool CPUCoreWorker::hasCurrentProcess(){
     std::lock_guard<std::mutex> lock(coreMutex);
     // TODO: check if there is a process assigned
     return assignedProcess;
+}
+
+void CPUCoreWorker::stop() {
+    running = false;
+    {
+        std::lock_guard<std::mutex> lock(coreMutex);
+        running = false;
+    }
+    if (coreThread.joinable()) {
+        coreThread.join();
+    }
 }
