@@ -1,4 +1,3 @@
-#pragma once
 #include "Scheduler.h"
 #include <iomanip>
 
@@ -8,7 +7,7 @@ Scheduler::Scheduler() {
 
 void Scheduler::addProcess(const Process& process) {
     std::lock_guard<std::mutex> lock(processMutex);
-    auto newProcess = std::make_shared<Process>(process); // Create a shared pointer for the new process
+    std::shared_ptr<Process> newProcess = std::make_shared<Process>(process); // Create a shared pointer for the new process
     processList.push_back(newProcess);
     std::lock_guard<std::mutex> queueLock(readyQueueMutex);
     readyQueue.push(newProcess);
