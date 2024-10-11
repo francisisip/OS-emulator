@@ -30,7 +30,7 @@ public:
 
     void printSchedulerStatus();
 private:
-    bool running;
+    bool running = false;
     std::vector<std::unique_ptr<CPUCoreWorker>> coreList;
     std::vector<std::shared_ptr<Process>> processList;
     std::queue<std::shared_ptr<Process>> readyQueue;
