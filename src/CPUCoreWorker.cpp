@@ -14,6 +14,10 @@ void CPUCoreWorker::initialize() {
 
 }
 
+int CPUCoreWorker::getCoreId() {
+    return coreId;
+}
+
 void CPUCoreWorker::runCoreWorker(){
     while(true){
         if(assignedProcess){

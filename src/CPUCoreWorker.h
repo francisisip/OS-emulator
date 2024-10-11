@@ -9,6 +9,8 @@ public:
     ~CPUCoreWorker();
     // initializes the core worker, runs the runCoreWorker command 
     void initialize();
+    // Get coreId
+    int getCoreId();
     // sets the current process of the core worker
     void setCurrentProcess(std::shared_ptr<Process> process);
     // boolean to check if there is a process

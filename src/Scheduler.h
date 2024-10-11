@@ -14,9 +14,6 @@ public:
     // Add a Process
     void addProcess(const Process& process);
 
-    // Access the core workers
-    // Access all the processes
-
     // Endlessly runs the scheduler
     void runScheduler();
 
@@ -25,6 +22,9 @@ public:
 
     // Initialize all the cores within the scheduler
     void initializeCores(int numCores);
+
+    // Find an available core
+    int getAvailableCore();
 
     const std::vector<std::unique_ptr<CPUCoreWorker>>& getCoreList() const;
     const std::vector<std::shared_ptr<Process>>& getProcessList() const;

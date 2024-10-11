@@ -5,8 +5,6 @@ Scheduler::Scheduler() {
     // TODO: add constructor logic
 }
 
-
-
 void Scheduler::addProcess(const Process& process) {
     std::lock_guard<std::mutex> lock(processMutex);
     auto newProcess = std::make_shared<Process>(process); // Create a shared pointer for the new process
@@ -18,20 +16,20 @@ void Scheduler::addProcess(const Process& process) {
 void Scheduler::runFCFS() {
     while (running) {
         std::lock_guard<std::mutex> lock(readyQueueMutex);
-        // Check if ready queue is not emoty
+        // Check if ready queue is not empty
         if (!readyQueue.empty()) {
             // If not empty, grab top process
             auto curProcess = readyQueue.front();
-            
+            readyQueue.pop();
 
+            // Find a core that is available
+            auto coreId = getAvailableCore();
+
+            if (coreId >= 0) {
+                curProcess->setCore(coreId);
+                coreList[coreId - 1]->setCurrentProcess(curProcess);
+            } 
         }
-
-
-        // Then initialize the CPU coreworker
-
-        // Then assign it to a CPU Core worker.
-
-        // Then execute the core worker.
     }
 };
 
@@ -55,6 +53,15 @@ void Scheduler::initializeCores(int coreNum) {
         // Initialize the most recently created 
         coreList.back()->initialize();
     }
+}
+
+int Scheduler::getAvailableCore() {
+    for (auto& core: coreList) {
+        if (!core->hasCurrentProcess()) {
+            return core->getCoreId();
+        }
+    }
+    return -1;
 }
 
 const std::vector<std::unique_ptr<CPUCoreWorker>>& Scheduler::getCoreList() const {
