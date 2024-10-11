@@ -9,6 +9,8 @@ class Scheduler {
 public:
     Scheduler();
 
+    // Getters
+
     // Add a Process
     void addProcess(const Process& process);
 
@@ -23,6 +25,10 @@ public:
 
     // Initialize all the cores within the scheduler
     void initializeCores(int numCores);
+
+    const std::vector<std::unique_ptr<CPUCoreWorker>>& getCoreList() const;
+    const std::vector<std::shared_ptr<Process>>& getProcessList() const;
+
 private:
     bool running;
     std::vector<std::unique_ptr<CPUCoreWorker>> coreList;

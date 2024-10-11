@@ -25,10 +25,6 @@ public:
 	int getCommandCounter() const; 
 	int getCommandCount() const;
 	bool isFinished() const;
-	
-
-	int getLinesOfCode() const; // what is this for?
-
 	void setCore(int coreID);
 
 	void executeCurrentCommand();

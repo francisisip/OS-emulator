@@ -50,7 +50,17 @@ void Scheduler::initialize() {
 
 void Scheduler::initializeCores(int coreNum) {
     for (int i = 0; i < coreNum; i++) {
-        CPUCoreWorker core(i);
-        
+        // Initialize a new core then add it to coreList 
+        coreList.push_back(std::make_unique<CPUCoreWorker>(i));
+        // Initialize the most recently created 
+        coreList.back()->initialize();
     }
+}
+
+const std::vector<std::unique_ptr<CPUCoreWorker>>& Scheduler::getCoreList() const {
+    return coreList;
+}
+
+const std::vector<std::shared_ptr<Process>>& Scheduler::getProcessList() const {
+    return processList;
 }
