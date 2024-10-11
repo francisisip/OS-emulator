@@ -1,3 +1,4 @@
+#pragma once
 #include "Process.h"
 #include <iostream>
 
@@ -43,6 +44,9 @@ bool Process::isFinished() const {
 	return finished;
 }
 
+void Process::setCore(int coreID) {
+	cpuCoreID = coreID;
+}
 
 void Process::executeCurrentCommand() {
 	std::cout << "Hello world from " << this->name << std::endl;

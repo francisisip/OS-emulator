@@ -22,12 +22,14 @@ public:
 	int getCPUCoreID() const;
 	ProcessState getState() const;
 	std::string getTimeCreated() const;
-	int getCommandCounter() const; // might be unnecessary
+	int getCommandCounter() const; 
 	int getCommandCount() const;
 	bool isFinished() const;
 	
 
 	int getLinesOfCode() const; // what is this for?
+
+	void setCore(int coreID);
 
 	void executeCurrentCommand();
 	void moveToNextLine();

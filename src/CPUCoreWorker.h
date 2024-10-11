@@ -5,8 +5,8 @@
 class CPUCoreWorker 
 {
 public:
-    ~CPUCoreWorker();
     CPUCoreWorker(int coreId);
+    ~CPUCoreWorker();
     // initializes the core worker, runs the runCoreWorker command 
     void initialize();
     // sets the current process of the core worker
