@@ -28,7 +28,7 @@ public:
     const std::vector<std::unique_ptr<CPUCoreWorker>>& getCoreList() const;
     const std::vector<std::shared_ptr<Process>>& getProcessList() const;
 
-    void printSchedulerStatus();
+    void printSchedulerStatus() const;
 private:
     bool running = false;
     std::vector<std::unique_ptr<CPUCoreWorker>> coreList;

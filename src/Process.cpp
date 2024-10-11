@@ -48,11 +48,14 @@ void Process::setCore(int coreID) {
 }
 
 void Process::executeCurrentCommand() {
-	std::cout << "Hello world from " << this->name << std::endl;
-	moveToNextLine();
+	// std::cout << "Hello world from " << this->name << std::endl;
+	if (commandCounter < commandCount)
+		moveToNextLine();
+	else
+		finished = true;
 }
 
 void Process::moveToNextLine() {
-	this->commandCounter++;
+	commandCounter++;
 }
 

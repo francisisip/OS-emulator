@@ -25,15 +25,16 @@ void Scheduler::runFCFS() {
             // Find a core that is available
             auto coreId = getAvailableCore();
 
-            if (coreId >= 0) {
+            if (coreId != -1) {
                 curProcess->setCore(coreId);
-                coreList[coreId - 1]->setCurrentProcess(curProcess);
-            } 
+                coreList[coreId]->setCurrentProcess(curProcess);
+            } else std::cout << "No Core Available";
         }
     }
 };
 
 void Scheduler::runScheduler() {
+
     // Continuously run scheduling algorithms
     while (running) {
         // For now, only run FCFS
@@ -72,7 +73,7 @@ const std::vector<std::shared_ptr<Process>>& Scheduler::getProcessList() const {
     return processList;
 }
 
-void Scheduler::printSchedulerStatus(){
+void Scheduler::printSchedulerStatus() const{
     	std::cout << "--------------------------------------------\n";
 	std::cout << "Running processes:\n";
 	const std::vector<std::shared_ptr<Process>>& processes = this->getProcessList();
