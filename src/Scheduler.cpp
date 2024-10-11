@@ -20,18 +20,15 @@ void Scheduler::runFCFS() {
         if (!readyQueue.empty()) {
             // If not empty, grab top process
             auto curProcess = readyQueue.front();
-            readyQueue.pop();
+
 
             // Find a core that is available
             auto coreId = getAvailableCore();
 
             if (coreId != -1) {
+                readyQueue.pop();
                 curProcess->setCore(coreId);
                 coreList[coreId]->setCurrentProcess(curProcess);
-            }
-            else {
-                // Else put the curProcess back to the top of ready queue
-                readyQueue.push(curProcess);
             }
         }
     }
@@ -78,7 +75,7 @@ const std::vector<std::shared_ptr<Process>>& Scheduler::getProcessList() const {
 }
 
 void Scheduler::printSchedulerStatus() const{
-    	std::cout << "--------------------------------------------\n";
+    std::cout << "--------------------------------------------\n";
 	std::cout << "Running processes:\n";
 	const std::vector<std::shared_ptr<Process>>& processes = this->getProcessList();
 	for (const auto& process : processes) {
@@ -105,9 +102,10 @@ void Scheduler::printSchedulerStatus() const{
 		if (process->isFinished()) {
 			std::cout << std::left << std::setw(20) << process->getName()
 				<< std::left << std::setw(30) << process->getTimeCreated()
-				<< "Core:   " << std::setw(15) << process->getCPUCoreID()
+				<< "Core:   " << std::setw(15) << "Finished"
 				<< std::left << std::setw(1) << process->getCommandCounter() << " / "
 				<< process->getCommandCount() << "\n";
 		}
 	}
+    std::cout << "--------------------------------------------\n";
 }

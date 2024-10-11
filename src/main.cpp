@@ -20,9 +20,6 @@ int main()
 	std::shared_ptr<Process> process8 = std::make_shared<Process>("process 8", 100);
 	std::shared_ptr<Process> process9 = std::make_shared<Process>("process 9", 100);
 	std::shared_ptr<Process> process10 = std::make_shared<Process>("process 10", 100);
-
-
-	scheduler.printSchedulerStatus();
 	scheduler.initialize();
 	scheduler.initializeCores(4);
 	scheduler.addProcess(*process1);
@@ -36,15 +33,19 @@ int main()
 	scheduler.addProcess(*process9);
 	scheduler.addProcess(*process10);
 
-	while(true) {
-		scheduler.printSchedulerStatus();
-		sleep(1);
+	std::string command;
+	while (true) {
+		// Wait for user input
+		std::cout << "Enter command: ";
+		std::getline(std::cin, command);
+
+		// Handle commands
+		if (command == "screen -ls") {
+			scheduler.printSchedulerStatus();
+		} else if (command == "exit") {
+			break; // Exit the loop
+		}
 	}
-
-
-
-	scheduler.runScheduler();
-
 
 	return 0;
 }

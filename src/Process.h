@@ -22,6 +22,7 @@ public:
 	int getCPUCoreID() const;
 	ProcessState getState() const;
 	std::string getTimeCreated() const;
+	std::string getCurrentCommandTime() const;
 	int getCommandCounter() const; 
 	int getCommandCount() const;
 	bool isFinished() const;
