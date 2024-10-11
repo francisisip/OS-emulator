@@ -28,7 +28,11 @@ void Scheduler::runFCFS() {
             if (coreId != -1) {
                 curProcess->setCore(coreId);
                 coreList[coreId]->setCurrentProcess(curProcess);
-            } else std::cout << "No Core Available";
+            }
+            else {
+                // Else put the curProcess back to the top of ready queue
+                readyQueue.push(curProcess);
+            }
         }
     }
 };

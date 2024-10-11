@@ -40,7 +40,7 @@ void CPUCoreWorker::runProcess(){
     // FCFS
     while(!currentProcess->isFinished()){
         currentProcess->executeCurrentCommand();
-        sleep(0.25);
+        std::this_thread::sleep_for(std::chrono::milliseconds(80));
     }
     currentProcess.reset();
     assignedProcess = false;
