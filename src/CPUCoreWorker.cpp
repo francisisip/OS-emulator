@@ -1,5 +1,8 @@
 #include "CPUCoreWorker.h"
 
+CPUCoreWorker::CPUCoreWorker(int coreId){
+    this->coreId = coreId;
+}
 
 void CPUCoreWorker::initialize() {
     // initialize a new thread for this CPU
