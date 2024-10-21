@@ -97,9 +97,13 @@ void MenuScreen::handleInput(std::string command) {
 	else if (wordCount == 1) {
 		if (command == "initialize") {
 			std::cout << "initialize command recognized. Doing something\n" << std::endl;
+			// TODO: Implement initialize. start scheduler
 		}
+
+		// TODO: disallow all commands until initialize is called
 		else if (command == "scheduler-test") {
 			std::cout << "scheduler-test command recognized. Doing something\n" << std::endl;
+			// TODO: create processes based off config.txt
 		}
 		else if (command == "scheduler-stop") {
 			std::cout << "scheduler-stop command recognized. Doing something\n" << std::endl;
