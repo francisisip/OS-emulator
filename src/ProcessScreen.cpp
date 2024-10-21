@@ -16,7 +16,7 @@ ProcessScreen::~ProcessScreen() {
 }
 
 void ProcessScreen::onExecute() {
-    system("cls");
+    system("clear");
     display();
     process();
 }
@@ -69,7 +69,7 @@ void ProcessScreen::handleInput(std::string command) {
     if (wordCount == 1) {
         if (command == "clear") {
             commandHistory.clear();
-            system("cls");
+            system("clear");
         }
         else if (command == "exit") {
             currentInstance->switchScreenBack();

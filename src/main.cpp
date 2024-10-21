@@ -1,5 +1,7 @@
-#include "ConsoleManager.h"
 
+#include "ConsoleManager.h"
+#include "Scheduler.h"
+#include <iostream>
 int main()
 {
 	ConsoleManager::initialize();

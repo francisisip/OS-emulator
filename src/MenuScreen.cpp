@@ -17,7 +17,7 @@ MenuScreen::~MenuScreen() {
 }
 
 void MenuScreen::onExecute() {
-	system("cls");
+	system("clear");
 	instance = ConsoleManager::getInstance();
 	display();
 	process();
@@ -109,7 +109,7 @@ void MenuScreen::handleInput(std::string command) {
 		}
 		else if (command == "clear") {
 			commandHistory.clear();
-			system("cls");
+			system("clear");
 		}
 		else if (command == "exit") {
 			exit(0);
