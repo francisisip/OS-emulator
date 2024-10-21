@@ -1,7 +1,7 @@
 #include "Process.h"
 #include <thread>
 #include <memory>
-
+#include <chrono>
 class CPUCoreWorker 
 {
 public:

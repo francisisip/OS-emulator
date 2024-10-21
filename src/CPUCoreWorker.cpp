@@ -1,5 +1,7 @@
 #include "CPUCoreWorker.h"
 
+#include <utility>
+
 CPUCoreWorker::CPUCoreWorker(int coreId){
     this->coreId = coreId;
 }
@@ -36,8 +38,9 @@ void CPUCoreWorker::runCoreWorker(){
 
 void CPUCoreWorker::runProcess(){
     // FCFS
-    for(int i = 0; i < currentProcess->getCommandCount(); i++){
+    while(!currentProcess->isFinished()){
         currentProcess->executeCurrentCommand();
+        std::this_thread::sleep_for(std::chrono::milliseconds(80));
     }
     currentProcess.reset();
     assignedProcess = false;
@@ -57,12 +60,8 @@ bool CPUCoreWorker::hasCurrentProcess(){
 }
 
 void CPUCoreWorker::stop() {
-    running = false;
     {
         std::lock_guard<std::mutex> lock(coreMutex);
         running = false;
-    }
-    if (coreThread.joinable()) {
-        coreThread.join();
     }
 }
