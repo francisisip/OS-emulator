@@ -55,7 +55,6 @@ void CPUCoreWorker::setCurrentProcess(std::shared_ptr<Process> process){
 
 bool CPUCoreWorker::hasCurrentProcess(){
     std::lock_guard<std::mutex> lock(coreMutex);
-    // TODO: check if there is a process assigned
     return assignedProcess;
 }
 

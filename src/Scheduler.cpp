@@ -1,9 +1,14 @@
 #include "Scheduler.h"
 #include <iomanip>
 
+Scheduler* Scheduler::instance = nullptr;
 Scheduler::Scheduler() {
     // TODO: add constructor logic
 }
+
+Scheduler* Scheduler::getInstance(){
+    return instance;
+};
 
 void Scheduler::addProcess(const Process& process) {
     std::lock_guard<std::mutex> lock(processMutex);
@@ -34,19 +39,32 @@ void Scheduler::runFCFS() {
     }
 };
 
-void Scheduler::runScheduler() {
+void Scheduler::initialize() {
+    instance = new Scheduler();
+} 
+
+void Scheduler::run() {
+    running = true;
+    schedulerThread = std::thread(&Scheduler::startSchedulerLoop, this);
+}
+// void ConsoleManager::initialize() {
+//     instance = new ConsoleManager();
+// }
+
+
+void Scheduler::startSchedulerLoop() {
 
     // Continuously run scheduling algorithms
     while (running) {
+        // TODO: maybe add the global variable ticker here?
         // For now, only run FCFS
         runFCFS();
     }
 }
 
-void Scheduler::initialize() {
-    running = true;
-    schedulerThread = std::thread(&Scheduler::runScheduler, this);
-} 
+
+
+
 
 void Scheduler::initializeCores(int coreNum) {
     for (int i = 0; i < coreNum; i++) {

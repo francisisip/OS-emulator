@@ -10,17 +10,19 @@ public:
     Scheduler();
 
     // Getters
-
+    static Scheduler* getInstance();
+    static void initialize();
     // Add a Process
     void addProcess(const Process& process);
 
     // Endlessly runs the scheduler
-    void runScheduler();
-
+    void run();
+    
     // Initialize the scheduler
-    void initialize();
+    
     // Initialize all the cores within the scheduler
     void initializeCores(int numCores);
+
 
     // Find an available core
     int getAvailableCore();
@@ -30,7 +32,12 @@ public:
 
     void printSchedulerStatus() const;
 private:
+    void startSchedulerLoop();
+    void runFCFS();
+
+
     bool running = false;
+    static Scheduler* instance;
     std::vector<std::unique_ptr<CPUCoreWorker>> coreList;
     std::vector<std::shared_ptr<Process>> processList;
     std::queue<std::shared_ptr<Process>> readyQueue;
@@ -40,6 +47,6 @@ private:
     std::mutex processMutex; // Protect access to the list of processes
     std::thread schedulerThread;
 
-    void runFCFS();
+    
 
 };

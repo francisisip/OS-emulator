@@ -5,8 +5,10 @@
 
 #include "MenuScreen.h"
 #include "ConsoleManager.h"
+#include "Scheduler.h"
 
 ConsoleManager* instance;
+Scheduler* schedulerInstance;
 
 MenuScreen::MenuScreen(): AConsole("MAIN_MENU") {
 
@@ -19,6 +21,7 @@ MenuScreen::~MenuScreen() {
 void MenuScreen::onExecute() {
 	system("clear");
 	instance = ConsoleManager::getInstance();
+	schedulerInstance = Scheduler::getInstance();
 	display();
 	process();
 }
@@ -88,6 +91,10 @@ void MenuScreen::handleInput(std::string command) {
 			else {
 				instance->switchScreen("P_" + param);
 			}
+		}
+		else if (instruction == "screen" && option =="-ls") {
+			std::cout << "screen -ls called";
+			schedulerInstance->printSchedulerStatus();
 		}
 		else {
 			commandHistory.back() += "\nCommand not recognized";

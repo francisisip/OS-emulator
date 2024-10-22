@@ -10,7 +10,7 @@ ConsoleManager::ConsoleManager() {
 }
 
 ConsoleManager::~ConsoleManager() {
-
+    destroy();
 }
 
 ConsoleManager* ConsoleManager::getInstance() {
