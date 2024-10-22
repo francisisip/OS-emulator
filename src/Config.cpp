@@ -1,8 +1,16 @@
 #include "Config.h"
 
+Config* Config::instance = nullptr;
+Config::Config() {
+    loadConfig("config.txt");
+}
 
-Config::Config(const std::string& filename) {
-    loadConfig(filename);
+Config* Config::getInstance(){
+    return instance;
+}
+
+void Config::initialize() {
+    instance = new Config();
 }
 
 // Load the configuration from the file

@@ -7,12 +7,13 @@
 #include <sstream>
 #include <stdexcept>
 #include <map>
-
 class Config {
 public:
     // Constructor that loads configuration from file
-    Config(const std::string& filename);
-
+    Config();
+    static Config* getInstance();
+    static void initialize();
+    
     // Getters for parameters
     int getNumCpu() const;
     std::string getScheduler() const;
@@ -24,6 +25,7 @@ public:
 
 private:
     // Configuration parameters
+    static Config* instance;
     int numCpu;
     std::string scheduler;
     unsigned int quantumCycles;
