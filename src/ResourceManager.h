@@ -18,6 +18,6 @@ public:
 
 private:
    static ResourceManager* instance;
-    Scheduler* schedulerInstance;
+   Scheduler* schedulerInstance;
 
 };

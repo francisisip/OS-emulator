@@ -1,6 +1,6 @@
 #include "ResourceManager.h"
 
-ResourceManager* instance;
+ResourceManager* ResourceManager::instance = nullptr;
 ResourceManager::ResourceManager(){
     
 }
@@ -8,6 +8,7 @@ ResourceManager::ResourceManager(){
 void ResourceManager::initialize(){
     instance = new ResourceManager();
 }
+
 ResourceManager* ResourceManager::getInstance(){
     return instance;
 }
