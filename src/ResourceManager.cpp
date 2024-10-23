@@ -1,6 +1,8 @@
 #include "ResourceManager.h"
 
 ResourceManager* ResourceManager::instance = nullptr;
+Scheduler* schedulerInstance;
+Config* configInstance;
 ResourceManager::ResourceManager(){
     
 }
@@ -31,6 +33,15 @@ void ResourceManager::schedulerTestStart(){
     }
 }
 
+void ResourceManager::initializeScheduler(){
+    // Initializes the scheduler, together with the input from the config.txt
+    configInstance = Config::
+    schedulerInstance = Scheduler::getInstance();
+    int numCores = 
+    schedulerInstance->initializeCores();
+    // set scheduler type
+    // set scheduler quantum slice number
+}
 void ResourceManager::schedulerTestStop(){
     // stop scheduler test, if it's running
 
