@@ -5,13 +5,16 @@
 #include <iomanip>
 #include <sstream>
 
+Config* config = nullptr;
+
 Process::Process(std::string name){
 	//TODO: make processes based off the the ticker
 	// Add to the ready queue
 	this->name = name;
-	this->commandCount = commandCount;
+	this->commandCount = setCommandCount();
 	this->commandCounter = 0;
 	timeCreated = std::chrono::system_clock::now();
+	this->finished = false;
 }
 
 int Process::getPId() const {
@@ -57,6 +60,18 @@ bool Process::isFinished() const {
 
 void Process::setCore(int coreID) {
 	cpuCoreID = coreID;
+}
+
+unsigned int Process::setCommandCount() {
+	Config* config = Config::getInstance();
+
+	int lower_boundary = config->getMinIns();
+	int upper_boundary = config->getMaxIns();
+
+	// Generate random number of commands
+	commandCount = lower_boundary + (rand() % (upper_boundary - lower_boundary + 1));
+
+	return commandCount;
 }
 
 void Process::executeCurrentCommand() {

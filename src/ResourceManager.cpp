@@ -1,5 +1,8 @@
 #include "ResourceManager.h"
 
+Config* currentConfig = nullptr;
+Scheduler* scheduler = nullptr;
+
 ResourceManager* ResourceManager::instance = nullptr;
 Scheduler* schedulerInstance;
 Config* configInstance;
@@ -9,6 +12,8 @@ ResourceManager::ResourceManager(){
 
 void ResourceManager::initialize(){
     instance = new ResourceManager();
+    instance->running = false;
+    instance->batchNum = 0;
 }
 
 ResourceManager* ResourceManager::getInstance(){
@@ -17,20 +22,30 @@ ResourceManager* ResourceManager::getInstance(){
 
 void ResourceManager::schedulerTestStart(){
     // do a loop, once stop happens, get out of loop
-    // while (/* condition */)
+    currentConfig = Config::getInstance();
+    scheduler = Scheduler::getInstance();
+    unsigned int frequency = currentConfig->getBatchProcessFreq();
+    running = true;
+
+    while (running)
     {
-        // TODO: do this
-        /* code */
-        // create a process
-        // get values from Config class.
-        // random values
-        // Process newProcess = new Process("test_print") 
-        // sleep for getBatchProcessFreq from config
-        // create a process based on these values
-        // add it to the ready queue of Scheduler
-        // Scheduler::addProcess()
-        // sleep this thread CPU cycle delay times value in config.txt
+        Process newProcess = Process("process_" + std::to_string(batchNum));
+        scheduler->addProcess(newProcess);
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(100 * (frequency+1)));
+        batchNum++;
     }
+} 
+
+void ResourceManager::startSchedulerInThread(){
+    if (running == true){
+        std::cout << "Scheduler test is already running" << std::endl;
+        return;
+    } else {
+        std::thread schedulerTestThread(&ResourceManager::schedulerTestStart, this); 
+        schedulerTestThread.detach();  
+    }
+
 }
 
 void ResourceManager::initializeScheduler(){
@@ -44,5 +59,5 @@ void ResourceManager::initializeScheduler(){
 }
 void ResourceManager::schedulerTestStop(){
     // stop scheduler test, if it's running
-
+    running = false;
 }

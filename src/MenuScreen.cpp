@@ -121,14 +121,15 @@ void MenuScreen::handleInput(std::string command) {
 			// TODO: disallow all commands until initialize is called
 			else if (command == "scheduler-test") {
 				std::cout << "scheduler-test command recognized. Doing something\n" << std::endl;
-				// TODO: ResourceManager::schedulerTestStart();
+				resourceInstance->startSchedulerInThread();
 			}
 			else if (command == "scheduler-stop") {
-				std::cout << "scheduler-stop command recognized. Doing something\n" << std::endl;
+				resourceInstance->schedulerTestStop();
 			}
 			else if (command == "report-util") {
 				// TODO: txt file
 				std::cout << "report-util command recognized. Doing something\n" << std::endl;
+				schedulerInstance->printSchedulerStatus();
 			}
 			else if (command == "clear") {
 				commandHistory.clear();
