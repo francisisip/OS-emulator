@@ -14,6 +14,7 @@ Process::Process(std::string name){
 	this->commandCount = setCommandCount();
 	this->commandCounter = 0;
 	timeCreated = std::chrono::system_clock::now();
+	this->finished = false;
 }
 
 int Process::getPId() const {

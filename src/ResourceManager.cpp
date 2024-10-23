@@ -40,8 +40,8 @@ void ResourceManager::startSchedulerInThread(){
         std::cout << "Scheduler test is already running" << std::endl;
         return;
     } else {
-        std::thread schedulerThread(&ResourceManager::schedulerTestStart, this); 
-        schedulerThread.detach();  
+        std::thread schedulerTestThread(&ResourceManager::schedulerTestStart, this); 
+        schedulerTestThread.detach();  
     }
 
 }
