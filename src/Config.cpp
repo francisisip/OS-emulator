@@ -36,11 +36,11 @@ void Config::loadConfig(const std::string& filename) {
     // Assign and validate values
     numCpu = validateNumCpu(std::stoi(configMap["num-cpu"]));
     scheduler = validateScheduler(configMap["scheduler"]);
-    quantumCycles = validateRange("quantumcycles", std::stoul(configMap["quantumcycles"]), 1, UINT32_MAX);
-    batchProcessFreq = validateRange("batchprocess-freq", std::stoul(configMap["batchprocess-freq"]), 1, UINT32_MAX);
+    quantumCycles = validateRange("quantum-cycles", std::stoul(configMap["quantum-cycles"]), 1, UINT32_MAX);
+    batchProcessFreq = validateRange("batch-process-freq", std::stoul(configMap["batch-process-freq"]), 1, UINT32_MAX);
     minIns = validateRange("min-ins", std::stoul(configMap["min-ins"]), 1, UINT32_MAX);
     maxIns = validateRange("max-ins", std::stoul(configMap["max-ins"]), 1, UINT32_MAX);
-    delaysPerExec = validateRange("delays-perexec", std::stoul(configMap["delays-perexec"]), 0, UINT32_MAX);
+    delaysPerExec = validateRange("delay-per-exec", std::stoul(configMap["delay-per-exec"]), 0, UINT32_MAX);
 
     // Additional logic to ensure `min-ins` <= `max-ins`
     if (minIns > maxIns) {
@@ -58,7 +58,7 @@ int Config::validateNumCpu(int numCpu) {
 
 // Helper to validate scheduler type
 std::string Config::validateScheduler(const std::string& scheduler) {
-    if (scheduler != "fcfs" && scheduler != "rr") {
+    if (scheduler != "\"fcfs\"" && scheduler != "\"rr\"") {
         throw std::invalid_argument("scheduler must be either 'fcfs' or 'rr'");
     }
     return scheduler;

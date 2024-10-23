@@ -5,4 +5,3 @@ main
 /src/*.exe
 .DS_Store
 .vs
-config.txt

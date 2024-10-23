@@ -7,6 +7,7 @@
 #include <sstream>
 #include <stdexcept>
 #include <map>
+#include <stdint.h>
 class Config {
 public:
     // Constructor that loads configuration from file
