@@ -116,6 +116,7 @@ void MenuScreen::handleInput(std::string command) {
 		else if (wordCount == 1) {
 			if (command == "initialize") {
 				std::cout << "OS is already initialized\n" << std::endl;
+				resourceInstance->initializeScheduler();
 			}
 
 			// TODO: disallow all commands until initialize is called

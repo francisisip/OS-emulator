@@ -31,7 +31,10 @@ public:
     const std::vector<std::shared_ptr<Process>>& getProcessList() const;
 
     void printSchedulerStatus() const;
+
+    // TODO: All you enrique ;)
     void setSchedulerAlgorithm();
+    void setQuantumCycles();
     
 private:
     void startSchedulerLoop();

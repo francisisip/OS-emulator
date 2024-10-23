@@ -1,10 +1,8 @@
 #include "ResourceManager.h"
 
 Config* currentConfig = nullptr;
-Scheduler* scheduler = nullptr;
 
 ResourceManager* ResourceManager::instance = nullptr;
-Scheduler* schedulerInstance;
 Config* configInstance;
 ResourceManager::ResourceManager(){
     
@@ -23,7 +21,7 @@ ResourceManager* ResourceManager::getInstance(){
 void ResourceManager::schedulerTestStart(){
     // do a loop, once stop happens, get out of loop
     currentConfig = Config::getInstance();
-    scheduler = Scheduler::getInstance();
+    Scheduler* scheduler = Scheduler::getInstance();
     unsigned int frequency = currentConfig->getBatchProcessFreq();
     running = true;
 
@@ -49,13 +47,18 @@ void ResourceManager::startSchedulerInThread(){
 }
 
 void ResourceManager::initializeScheduler(){
+    currentConfig = Config::getInstance();
+    Scheduler* scheduler = Scheduler::getInstance();
     // Initializes the scheduler, together with the input from the config.txt
-    configInstance = Config::
-    schedulerInstance = Scheduler::getInstance();
-    int numCores = 
-    schedulerInstance->initializeCores();
-    // set scheduler type
-    // set scheduler quantum slice number
+
+    int numCores = currentConfig->getNumCpu();
+    std::string algorithm = currentConfig->getScheduler();
+    int quantumCycles = currentConfig->getQuantumCycles();
+    scheduler->initializeCores(numCores);
+    scheduler->run();
+    // FIXME: once this is setup, please uncomment these
+    // scheduler->setSchedulerAlgorithm(algorithm);
+    // scheduler->setQuantumCycles();
 }
 void ResourceManager::schedulerTestStop(){
     // stop scheduler test, if it's running
