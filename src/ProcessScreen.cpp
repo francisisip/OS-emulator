@@ -33,7 +33,8 @@ std::string getFormattedTime() {
 
 void ProcessScreen::display() {
     std::cout << currentProcess->getName().substr(2) << std::endl;
-    std::cout << "7 / 100" << std::endl;
+    std::cout << currentProcess->getCommandCounter() << "/"; 
+    std::cout << currentProcess->getCommandCount() << std::endl;
     std::cout << getFormattedTime() << "\n" << std::endl;
 
     for (int i = 0; i < commandHistory.size(); ++i) {

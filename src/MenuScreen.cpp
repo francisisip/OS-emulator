@@ -105,17 +105,20 @@ void MenuScreen::handleInput(std::string command) {
 		if (command == "initialize") {
 			std::cout << "initialize command recognized. Doing something\n" << std::endl;
 			// TODO: Implement initialize. start scheduler
+			// ResourceManager initialize = Scheduler, which will set its cpu cores, scheduling type
+			// allow all other commands
 		}
 
 		// TODO: disallow all commands until initialize is called
 		else if (command == "scheduler-test") {
 			std::cout << "scheduler-test command recognized. Doing something\n" << std::endl;
-			// TODO: create processes based off config.txt
+			// TODO: ResourceManager::schedulerTestStart();
 		}
 		else if (command == "scheduler-stop") {
 			std::cout << "scheduler-stop command recognized. Doing something\n" << std::endl;
 		}
 		else if (command == "report-util") {
+			// TODO: txt file
 			std::cout << "report-util command recognized. Doing something\n" << std::endl;
 		}
 		else if (command == "clear") {

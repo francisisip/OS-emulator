@@ -31,8 +31,11 @@ void CPUCoreWorker::runCoreWorker(){
     while(true){
         if(assignedProcess){
             runProcess();
+            // ITS RUNNING
         }
+        // ITS IDLE
         totalCPUTicks++;
+        // sleep based off CPU Cycle delay
     }
 }
 
@@ -41,6 +44,7 @@ void CPUCoreWorker::runProcess(){
     while(!currentProcess->isFinished()){
         currentProcess->executeCurrentCommand();
         std::this_thread::sleep_for(std::chrono::milliseconds(80));
+        totalCPUTicks++;
     }
     currentProcess.reset();
     assignedProcess = false;
@@ -48,7 +52,6 @@ void CPUCoreWorker::runProcess(){
 
 void CPUCoreWorker::setCurrentProcess(std::shared_ptr<Process> process){
     std::lock_guard<std::mutex> lock(coreMutex);
-    // TODO: public method to set the current process stored in this CPU to the process. handled by scheduler
     currentProcess = process;
     assignedProcess = true;
 }

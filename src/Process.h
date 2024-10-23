@@ -14,7 +14,6 @@ public:
 		FINISHED
 	};
 	Process(std::string name);
-	Process(std::string name, int commandCount);
 
 	// Getters
 	int getPId() const;

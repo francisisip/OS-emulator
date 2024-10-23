@@ -42,6 +42,7 @@ void ConsoleManager::createProcessScreen(const std::string& baseName) {
     }
     
     consoles[newName] = std::make_shared<ProcessScreen>(std::make_shared<Process>(newName));
+    // TODO: add this to the scheduler (ready queue)
     consoleNameTracker[newName] = 1;
     switchScreen(newName);
 }

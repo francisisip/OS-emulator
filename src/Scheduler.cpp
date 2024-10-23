@@ -56,7 +56,6 @@ void Scheduler::startSchedulerLoop() {
 
     // Continuously run scheduling algorithms
     while (running) {
-        // TODO: maybe add the global variable ticker here?
         // For now, only run FCFS
         runFCFS();
     }

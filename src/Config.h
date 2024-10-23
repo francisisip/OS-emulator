@@ -8,6 +8,7 @@
 #include <stdexcept>
 #include <map>
 #include <stdint.h>
+
 class Config {
 public:
     // Constructor that loads configuration from file
@@ -23,7 +24,7 @@ public:
     unsigned int getMinIns() const;
     unsigned int getMaxIns() const;
     unsigned int getDelaysPerExec() const;
-
+    
 private:
     // Configuration parameters
     static Config* instance;

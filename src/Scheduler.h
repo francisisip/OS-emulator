@@ -31,6 +31,8 @@ public:
     const std::vector<std::shared_ptr<Process>>& getProcessList() const;
 
     void printSchedulerStatus() const;
+    void setSchedulerAlgorithm();
+    
 private:
     void startSchedulerLoop();
     void runFCFS();

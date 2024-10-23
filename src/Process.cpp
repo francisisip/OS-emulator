@@ -5,23 +5,12 @@
 #include <iomanip>
 #include <sstream>
 
-Process::Process(std::string name) {
-	this->name = name;
-}
-
-Process::Process(std::string name, int commandCount){
+Process::Process(std::string name){
+	//TODO: make processes based off the the ticker
+	// Add to the ready queue
 	this->name = name;
 	this->commandCount = commandCount;
 	this->commandCounter = 0;
-	// TODO: when created, make an empty log with Process name
-	// Create an empty log file with the process name
-	std::ofstream logFile(name + ".txt");
-	if (logFile) {
-		logFile << "Process name: " << name << std::endl;
-		logFile << "Logs:\n" << std::endl;
-		logFile.close();
-	}
-	// TODO: Fix this to make sure its right
 	timeCreated = std::chrono::system_clock::now();
 }
 
