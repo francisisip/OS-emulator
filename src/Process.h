@@ -3,6 +3,7 @@
 #include <chrono>
 #include <string>
 #include "ICommand.h"
+#include "Config.h"
 
 class Process {
 public:
@@ -26,6 +27,7 @@ public:
 	int getCommandCount() const;
 	bool isFinished() const;
 	void setCore(int coreID);
+	unsigned int setCommandCount();
 
 	void executeCurrentCommand();
 	void moveToNextLine();
