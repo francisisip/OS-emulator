@@ -2,6 +2,7 @@
 #include <thread>
 #include <memory>
 #include <chrono>
+#include <mutex>
 class CPUCoreWorker 
 {
 public:
