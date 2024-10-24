@@ -77,14 +77,6 @@ unsigned int Process::setCommandCount() {
 void Process::executeCurrentCommand() {
 	if (commandCounter < commandCount) {
 		moveToNextLine();
-
-		// Append to log with the specified format
-		std::ofstream logFile(name + ".txt", std::ios::app);
-		if (logFile) {
-			logFile << "(" << getCurrentCommandTime() << ") Core: " << cpuCoreID
-					<< " \"Hello world from " << name << "\"" << std::endl;
-			logFile.close();
-		}
 	} else {
 		finished = true;
 	}

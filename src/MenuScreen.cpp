@@ -116,6 +116,7 @@ void MenuScreen::handleInput(std::string command) {
 		else if (wordCount == 1) {
 			if (command == "initialize") {
 				std::cout << "OS is already initialized\n" << std::endl;
+				resourceInstance->initializeScheduler();
 			}
 
 			// TODO: disallow all commands until initialize is called
@@ -155,6 +156,7 @@ void MenuScreen::handleInput(std::string command) {
 				std::cout << "Initialized OS, all systems running\n" << std::endl;
 				// TODO: Implement initialize. start scheduler
 				// ResourceManager initialize = Scheduler, which will set its cpu cores, scheduling type
+				resourceInstance->initializeScheduler();
 			}
 			else if (command == "exit") {
 				exit(0);

@@ -43,7 +43,7 @@ void CPUCoreWorker::runProcess(){
     // FCFS
     while(!currentProcess->isFinished()){
         currentProcess->executeCurrentCommand();
-        std::this_thread::sleep_for(std::chrono::milliseconds(80));
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
         totalCPUTicks++;
     }
     currentProcess.reset();
