@@ -15,7 +15,7 @@ public:
 		WAITING,
 		FINISHED
 	};
-	Process(std::string name);
+	Process(std::string name, int pid);
 
 	// Getters
 	int getPId() const;
@@ -36,6 +36,7 @@ public:
 	
 	void executeCurrentCommand();
 	void moveToNextLine();
+	int setPID();
 
 
 private:
@@ -45,7 +46,6 @@ private:
 	CommandList commandList;
 
 	int cpuCoreID = -1;
-	int pid_counter = 0;
 	ProcessState currentState;
 	std::chrono::system_clock::time_point timeCreated;
 	int commandCounter; // indicate current command

@@ -39,7 +39,7 @@ void ResourceManager::schedulerTestStart(){
         // } while (consoles.find(newName) != consoles.end());
         // }
 
-        consoleManager->createProcessScreenScheduler(newName);
+        consoleManager->createProcessScreen(newName, false);
 
         std::this_thread::sleep_for(std::chrono::milliseconds(100 * (frequency+1)));
         batchNum++;

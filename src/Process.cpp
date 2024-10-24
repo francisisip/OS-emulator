@@ -7,10 +7,10 @@
 
 Config* config = nullptr;
 
-Process::Process(std::string name){
+Process::Process(std::string name, int pid){
 	//TODO: make processes based off the the ticker
 	// Add to the ready queue
-	this->pid = pid_counter++;
+	this->pid = pid;
 	this->name = name;
 	this->commandCount = setCommandCount();
 	this->commandCounter = 0;
@@ -107,4 +107,3 @@ void Process::executeCurrentCommand() {
 void Process::moveToNextLine() {
 	commandCounter++;
 }
-

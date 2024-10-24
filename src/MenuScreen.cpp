@@ -91,7 +91,7 @@ void MenuScreen::handleInput(std::string command) {
 			iss >> instruction >> option >> param;
 
 			if (instruction == "screen" && option == "-s") {
-				instance->createProcessScreen(param);
+				instance->createProcessScreen(param, true);
 			}
 			else if (instruction == "screen" && option == "-r") {
 				bool flag = instance->ifProcessScreenExistsAndNotFinished(param);
