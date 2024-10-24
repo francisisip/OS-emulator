@@ -1,5 +1,6 @@
 #include "Scheduler.h"
 #include "Process.h"
+#include "ConsoleManager.h"
 #include "Config.h"
 #include <thread>
 

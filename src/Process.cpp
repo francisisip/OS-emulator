@@ -14,7 +14,7 @@ Process::Process(std::string name){
 	this->commandCount = setCommandCount();
 	this->commandCounter = 0;
 	timeCreated = std::chrono::system_clock::now();
-	this->finished = false;
+	currentState = ProcessState::READY;
 }
 
 int Process::getPId() const {
@@ -59,7 +59,10 @@ int Process::getCycleCount() const {
 }
 
 bool Process::isFinished() const {
-	return finished;
+	if (currentState == ProcessState::FINISHED) {
+		return true;
+	}
+	return false;
 }
 
 void Process::setCore(int coreID) {
@@ -94,7 +97,7 @@ void Process::executeCurrentCommand() {
 	if (commandCounter < commandCount) {
 		moveToNextLine();
 	} else {
-		finished = true;
+		currentState = ProcessState::FINISHED;
 	}
 }
 void Process::moveToNextLine() {

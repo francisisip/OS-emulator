@@ -49,5 +49,4 @@ private:
 	int commandCounter; // indicate current command
 	int commandCount; // total no. of commands
 	int cycleCount; // no. of current cycles taken (for RR scheduling)
-	bool finished;
 };

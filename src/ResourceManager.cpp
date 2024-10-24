@@ -1,9 +1,9 @@
 #include "ResourceManager.h"
 
 Config* currentConfig = nullptr;
-
 ResourceManager* ResourceManager::instance = nullptr;
-Config* configInstance;
+ConsoleManager* consoleManager = nullptr;
+
 ResourceManager::ResourceManager(){
     
 }
@@ -22,6 +22,7 @@ void ResourceManager::schedulerTestStart(){
     // do a loop, once stop happens, get out of loop
     currentConfig = Config::getInstance();
     Scheduler* scheduler = Scheduler::getInstance();
+    ConsoleManager* consoleManager = ConsoleManager::getInstance();
     unsigned int frequency = currentConfig->getBatchProcessFreq();
     running = true;
 
@@ -38,8 +39,7 @@ void ResourceManager::schedulerTestStart(){
         // } while (consoles.find(newName) != consoles.end());
         // }
 
-        Process newProcess = Process(newName);
-        scheduler->addProcess(newProcess);
+        consoleManager->createProcessScreenScheduler(newName);
 
         std::this_thread::sleep_for(std::chrono::milliseconds(100 * (frequency+1)));
         batchNum++;

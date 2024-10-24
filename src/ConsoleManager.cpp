@@ -1,7 +1,6 @@
 #include "ConsoleManager.h"
 
 ConsoleManager* ConsoleManager::instance = nullptr;
-Scheduler* instanceScheduler = nullptr;
 
 ConsoleManager::ConsoleManager() {
     auto MAIN_MENU = std::make_shared<MenuScreen>();
@@ -20,7 +19,6 @@ ConsoleManager* ConsoleManager::getInstance() {
 
 void ConsoleManager::initialize() {
     instance = new ConsoleManager();
-    instanceScheduler = Scheduler::getInstance();
 }
 
 void ConsoleManager::destroy() {
@@ -33,6 +31,9 @@ void ConsoleManager::run() {
 
 
 void ConsoleManager::createProcessScreen(const std::string& baseName) {
+    Scheduler* scheduler = Scheduler::getInstance();
+
+
     std::string newName = baseName;
     if (consoles.find(newName) != consoles.end()){
         int* count = &consoleNameTracker[newName];
@@ -43,12 +44,29 @@ void ConsoleManager::createProcessScreen(const std::string& baseName) {
         } while (consoles.find(newName) != consoles.end());
     }
     
-    auto newProcess = std::make_shared<Process>(newName);
-    instanceScheduler->addProcess(*newProcess);
+    auto newProcess = scheduler->addProcess(newName);
     consoles[newName] = std::make_shared<ProcessScreen>(newProcess);
     consoleNameTracker[newName] = 1;
 
     switchScreen(newName);
+}
+
+void ConsoleManager::createProcessScreenScheduler(const std::string& baseName) {
+    Scheduler* scheduler = Scheduler::getInstance();
+
+    std::string newName = baseName;
+    if (consoles.find(newName) != consoles.end()){
+        int* count = &consoleNameTracker[newName];
+
+        do {
+            newName = baseName + "-" + std::to_string(*count);
+            (*count)++;
+        } while (consoles.find(newName) != consoles.end());
+    }
+    
+    auto newProcess = scheduler->addProcess(newName);
+    consoles[newName] = std::make_shared<ProcessScreen>(newProcess);
+    consoleNameTracker[newName] = 1;
 }
 
 void ConsoleManager::switchScreen(const std::string& name) {

@@ -100,5 +100,10 @@ void ProcessScreen::handleInput(std::string command) {
 }
 
 bool ProcessScreen::isFinished() const {
-    return currentProcess->isFinished();
+    if (currentProcess->getState() == Process::ProcessState::FINISHED) {
+        return true;
+    }
+    else {
+        return false;
+    }
 }

@@ -13,7 +13,7 @@ public:
     static Scheduler* getInstance();
     static void initialize();
     // Add a Process
-    void addProcess(const Process& process);
+    std::shared_ptr<Process> addProcess(const Process& process);
 
     // Endlessly runs the scheduler
     void run();
