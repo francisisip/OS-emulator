@@ -114,7 +114,6 @@ void MenuScreen::handleInput(std::string command) {
 			iss >> instruction >> option;
 
 			if (instruction == "screen" && option == "-ls") {
-				std::cout << "screen -ls called";
 				schedulerInstance->printSchedulerStatus();
 			}
 			else {
