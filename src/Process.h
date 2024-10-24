@@ -28,6 +28,7 @@ public:
 	int getCycleCount() const;
 	bool isFinished() const;
 	void setCore(int coreID);
+	void resetCore();
 	unsigned int setCommandCount();
 	void incrementCycleCount();
 	void resetCycleCount();

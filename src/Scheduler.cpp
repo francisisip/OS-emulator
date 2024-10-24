@@ -115,6 +115,7 @@ const std::vector<std::shared_ptr<Process>>& Scheduler::getProcessList() const {
 
 void Scheduler::requeueProcess(std::shared_ptr<Process> process) {
     std::lock_guard<std::mutex> lock(readyQueueMutex);
+    process->resetCore();
     readyQueue.push(process);
 }
 

@@ -51,8 +51,7 @@ void CPUCoreWorker::runProcess() {
     std::string scheduleType = currentConfig->getScheduler();
     int quantumCycles = currentConfig->getQuantumCycles();
 
-
-    if (scheduleType == "fcfs") {
+    if (scheduleType == "\"fcfs\"") {
         while(!currentProcess->isFinished()){
             currentProcess->executeCurrentCommand();
             std::this_thread::sleep_for(std::chrono::milliseconds(100 * delaysPerExec + 1));
@@ -62,7 +61,7 @@ void CPUCoreWorker::runProcess() {
         currentProcess.reset();
         assignedProcess = false;
 
-    } else {
+    } else if (scheduleType == "\"rr\"") {
         while(!currentProcess->isFinished()) {
             // At every CPU cycle, check if the process reached the max no. of quantum cycles
             processCycles = currentProcess->getCycleCount();

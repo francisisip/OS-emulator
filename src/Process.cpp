@@ -66,6 +66,10 @@ void Process::setCore(int coreID) {
 	cpuCoreID = coreID;
 }
 
+void Process::resetCore() {
+	cpuCoreID = -1;
+}
+
 unsigned int Process::setCommandCount() {
 	Config* config = Config::getInstance();
 
