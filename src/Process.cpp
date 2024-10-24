@@ -54,6 +54,10 @@ int Process::getCommandCount() const {
 	return commandCount;
 };
 
+int Process::getCycleCount() const {
+	return cycleCount;
+}
+
 bool Process::isFinished() const {
 	return finished;
 }
@@ -72,6 +76,14 @@ unsigned int Process::setCommandCount() {
 	commandCount = lower_boundary + (rand() % (upper_boundary - lower_boundary + 1));
 
 	return commandCount;
+}
+
+void Process::incrementCycleCount() {
+	cycleCount++;
+}
+
+void Process::resetCycleCount() {
+	cycleCount = 0;
 }
 
 void Process::executeCurrentCommand() {

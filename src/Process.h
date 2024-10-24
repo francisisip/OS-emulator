@@ -25,10 +25,13 @@ public:
 	std::string getCurrentCommandTime() const;
 	int getCommandCounter() const; 
 	int getCommandCount() const;
+	int getCycleCount() const;
 	bool isFinished() const;
 	void setCore(int coreID);
 	unsigned int setCommandCount();
-
+	void incrementCycleCount();
+	void resetCycleCount();
+	
 	void executeCurrentCommand();
 	void moveToNextLine();
 
@@ -44,5 +47,6 @@ private:
 	std::chrono::system_clock::time_point timeCreated;
 	int commandCounter; // indicate current command
 	int commandCount; // total no. of commands
+	int cycleCount; // no. of current cycles taken (for RR scheduling)
 	bool finished;
 };
