@@ -4,6 +4,7 @@
 
 CPUCoreWorker::CPUCoreWorker(int coreId){
     this->coreId = coreId;
+    this->assignedProcess = false;
 }
 
 CPUCoreWorker::~CPUCoreWorker() {
@@ -41,9 +42,11 @@ void CPUCoreWorker::runCoreWorker(){
 
 void CPUCoreWorker::runProcess(){
     // FCFS
+    unsigned int delay = Config::getInstance()->getDelaysPerExec();
     while(!currentProcess->isFinished()){
         currentProcess->executeCurrentCommand();
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        
+        std::this_thread::sleep_for(std::chrono::milliseconds(100 * (delay+1)));
         totalCPUTicks++;
     }
     currentProcess.reset();
