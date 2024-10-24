@@ -129,8 +129,8 @@ void Scheduler::setQuantumCycles(unsigned int cycles) {
     quantumCycles = cycles;
 }
 
-std::string Scheduler::printSchedulerStatus() const{
-    std::string string_ls = "\n";
+std::string Scheduler::getSchedulerStatus() const{
+    std::string string_ls = "";
 
     int coresUsed = 0;
 	const std::vector<std::unique_ptr<CPUCoreWorker>>& cores = getCoreList();
@@ -147,9 +147,9 @@ std::string Scheduler::printSchedulerStatus() const{
     std::string formattedUtilization = oss.str();
 
     string_ls += "CPU utilization: " + formattedUtilization  + "%\n";
-    string_ls += "Cores Used: " + std::to_string(coresUsed) + "\n";
+    string_ls += "Cores used: " + std::to_string(coresUsed) + "\n";
     string_ls += "Cores available: " + std::to_string(cpuCount - coresUsed) + "\n";
-    string_ls += "--------------------------------------------\n\n";
+    string_ls += "\n--------------------------------------------\n";
 
     string_ls += "Running processes:\n";
     const std::vector<std::shared_ptr<Process>>& processes = this->getProcessList();
@@ -184,10 +184,7 @@ std::string Scheduler::printSchedulerStatus() const{
             string_ls += oss.str(); 
         }
     }
-    string_ls += "--------------------------------------------\n\n";
-
-    std::cout << string_ls; // Print accumulated string
+    string_ls += "--------------------------------------------";
 
     return string_ls;
-
 }

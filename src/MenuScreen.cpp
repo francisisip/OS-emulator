@@ -29,7 +29,7 @@ void MenuScreen::setInitialized(bool flag) {
 }
 
 void MenuScreen::onExecute() {
-	system("cls");
+	system("clear");
 	instance = ConsoleManager::getInstance();
 	schedulerInstance = Scheduler::getInstance();
 	resourceInstance = ResourceManager::getInstance();
@@ -91,13 +91,13 @@ void MenuScreen::handleInput(std::string command) {
 			iss >> instruction >> option >> param;
 
 			if (instruction == "screen" && option == "-s") {
-				instance->createProcessScreen(param, true);
+				instance->switchScreen(instance->createProcessScreen(param));
 			}
 			else if (instruction == "screen" && option == "-r") {
 				bool flag = instance->ifProcessScreenExistsAndNotFinished(param);
 
 				if (!flag) {
-					commandHistory.back() += "\nScreen not found";
+					commandHistory.back() += "\nProcess " + param + " not found.";
 					std::cout << "Process "<< param << " not found.\n" << std::endl;
 				}
 				else {
@@ -105,8 +105,8 @@ void MenuScreen::handleInput(std::string command) {
 				}
 			}
 			else {
-				commandHistory.back() += "\nCommand not recognized";
-				std::cout << "Command not recognized\n" << std::endl;
+				commandHistory.back() += "\nCommand not recognized.";
+				std::cout << "Command not recognized.\n" << std::endl;
 			}
 		}
 		else if (wordCount == 2) {
@@ -114,54 +114,82 @@ void MenuScreen::handleInput(std::string command) {
 			iss >> instruction >> option;
 
 			if (instruction == "screen" && option == "-ls") {
-				commandHistory.back() += schedulerInstance->printSchedulerStatus();
+				commandHistory.back() += schedulerInstance->getSchedulerStatus();
+				std::cout << "\n" << schedulerInstance->getSchedulerStatus() << "\n\n";
+
 			}
 			else {
-				commandHistory.back() += "\nCommand not recognized";
-				std::cout << "Command not recognized\n" << std::endl;
+				commandHistory.back() += "\nCommand not recognized.";
+				std::cout << "Command not recognized.\n" << std::endl;
 			}
 		}
 		else if (wordCount == 1) {
 			if (command == "initialize") {
-				std::cout << "OS is already initialized\n" << std::endl;
-				resourceInstance->initializeScheduler();
+				commandHistory.back() += "\nOS is already initialized.";
+				std::cout << "OS is already initialized.\n" << std::endl;
 			}
 
 			else if (command == "scheduler-test") {
-				std::cout << "scheduler-test command recognized. Creating processes...\n" << std::endl;
-				resourceInstance->startSchedulerInThread();
+				if (!resourceInstance->startSchedulerInThread()) {
+					commandHistory.back() += "\nscheduler-test command recognized. Starting creation of processes...";
+					std::cout << "scheduler-test command recognized. Starting creation of processes...\n" << std::endl;
+				}
+				else {
+					commandHistory.back() += "\nscheduler-test is already running.";
+					std::cout << "scheduler-test is already running.\n" << std::endl;
+				}
 			}
 			else if (command == "scheduler-stop") {
-				std::cout << "scheduler-stop command recognized. Creating processes...\n" << std::endl;
-				resourceInstance->schedulerTestStop();
+				if (resourceInstance->schedulerTestStop())
+				{
+					commandHistory.back() += "\nscheduler-stop command recognized. Stopping creation of processes...";
+					std::cout << "scheduler-stop command recognized. Stopping creation of processes...\n" << std::endl;
+				}
+				else
+				{
+					commandHistory.back() += "\nscheduler-test is not running, there is nothing to stop.";
+					std::cout << "scheduler-test is not running, there is nothing to stop.\n" << std::endl;
+				}
 			}
 			else if (command == "report-util") {
-				// TODO: txt file
-				std::cout << "report-util command recognized. Doing something\n" << std::endl;
-				schedulerInstance->printSchedulerStatus();
+				std::ofstream outFile("csopesy-log.txt");
+
+				if (outFile.is_open()) {
+					outFile << schedulerInstance->getSchedulerStatus();
+					outFile.close();
+
+					std::filesystem::path currentPath = std::filesystem::current_path();
+					commandHistory.back() += "\nroot@csopesy:~$ Report generated at " + currentPath.string() + "\\csopesy-log.txt";
+					std::cout << "Report generated at " << currentPath.string() << "\\csopesy-log.txt\n" << std::endl;
+				}
+				else {
+					commandHistory.back() += "\nError generationt report file.";
+					std::cout << "Error generating report file.\n" << std::endl;
+				}
 			}
 			else if (command == "clear") {
 				commandHistory.clear();
-				system("cls");
+				system("clear");
 			}
 			else if (command == "exit") {
 				exit(0);
 			}
 			else {
-				commandHistory.back() += "\nCommand not recognized";
-				std::cout << "Command not recognized\n" << std::endl;
+				commandHistory.back() += "\nCommand not recognized.";
+				std::cout << "Command not recognized.\n" << std::endl;
 			}
 		}
 		else if (wordCount != 0) {
-			commandHistory.back() += "\nCommand not recognized";
-			std::cout << "Command not recognized\n" << std::endl;
+			commandHistory.back() += "\nCommand not recognized.";
+			std::cout << "Command not recognized.\n" << std::endl;
 		}
 	}
 	else {
 		if (wordCount == 1) {
 			if (command == "initialize") {
 				setInitialized(true);
-				std::cout << "Initialized OS, all systems running\n" << std::endl;
+				commandHistory.back() += "\nInitialized OS, all systems running.";
+				std::cout << "Initialized OS, all systems running.\n" << std::endl;
 				// TODO: Implement initialize. start scheduler
 				// ResourceManager initialize = Scheduler, which will set its cpu cores, scheduling type
 				resourceInstance->initializeScheduler();
@@ -170,11 +198,13 @@ void MenuScreen::handleInput(std::string command) {
 				exit(0);
 			}
 			else {
-				std::cout << "Initialize the OS first with command \"initialize\"\n" << std::endl;
+				commandHistory.back() += "\nInitialize the OS first with command \"initialize.\"";
+				std::cout << "Initialize the OS first with command \"initialize.\"\n" << std::endl;
 			}
 		}
 		else {
-			std::cout << "Initialize the OS first with command \"initialize\"\n" << std::endl;
+			commandHistory.back() += "\nInitialize the OS first with command \"initialize.\"";
+			std::cout << "Initialize the OS first with command \"initialize.\"\n" << std::endl;
 		}
 	}
 }

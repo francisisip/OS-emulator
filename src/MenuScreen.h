@@ -1,5 +1,7 @@
 #pragma once
 # include "AConsole.h"
+#include <fstream>
+#include <filesystem>
 
 class MenuScreen : public AConsole {
 public:

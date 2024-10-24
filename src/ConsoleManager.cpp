@@ -31,7 +31,7 @@ void ConsoleManager::run() {
 }
 
 
-void ConsoleManager::createProcessScreen(const std::string& baseName, bool makeSwitch) {
+std::string ConsoleManager::createProcessScreen(const std::string& baseName) {
     Scheduler* scheduler = Scheduler::getInstance();
     pid_counter++;
 
@@ -50,8 +50,7 @@ void ConsoleManager::createProcessScreen(const std::string& baseName, bool makeS
     consoles[newName] = std::make_shared<ProcessScreen>(sharedProcessAddress);
     consoleNameTracker[newName] = 1;
 
-    if (makeSwitch)
-        switchScreen(newName);
+    return newName;
 }
 
 void ConsoleManager::switchScreen(const std::string& name) {
@@ -64,7 +63,7 @@ void ConsoleManager::switchScreenBack() {
     auto temp = currentConsole;
     currentConsole = previousConsole;
     previousConsole = temp;
-    system("cls");
+    system("clear");
     currentConsole->onExecute();
 }
 
@@ -76,7 +75,6 @@ bool ConsoleManager::ifProcessScreenExistsAndNotFinished(const std::string& name
     }
     else {
         auto processScreen = std::dynamic_pointer_cast<ProcessScreen>(item->second);
-        processScreen->isFinished() ? false : true;
-        return true;
+        return processScreen->isFinished();
     }
 }

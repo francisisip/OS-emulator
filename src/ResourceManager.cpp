@@ -29,20 +29,22 @@ void ResourceManager::schedulerTestStart(){
     while (running)
     {
         std::string newName = "process_" + std::to_string(batchNum);
-        consoleManager->createProcessScreen(newName, false);
+        newName = consoleManager->createProcessScreen(newName);
 
         std::this_thread::sleep_for(std::chrono::milliseconds(100 * (frequency+1)));
         batchNum++;
     }
 } 
 
-void ResourceManager::startSchedulerInThread(){
-    if (running == true){
-        std::cout << "Scheduler test is already running" << std::endl;
-        return;
-    } else {
+bool ResourceManager::startSchedulerInThread(){
+    if (running == false){
         std::thread schedulerTestThread(&ResourceManager::schedulerTestStart, this); 
-        schedulerTestThread.detach();  
+        schedulerTestThread.detach();
+        return false;
+    } 
+    else 
+    {
+        return true;
     }
 
 }
@@ -60,7 +62,12 @@ void ResourceManager::initializeScheduler(){
     scheduler->setQuantumCycles(quantumCycles);
     scheduler->run();
 }
-void ResourceManager::schedulerTestStop(){
+
+bool ResourceManager::schedulerTestStop(){
     // stop scheduler test, if it's running
-    running = false;
+    if (running == true){
+        running = false;
+        return true;
+    }
+    return running;
 }

@@ -16,7 +16,7 @@ ProcessScreen::~ProcessScreen() {
 }
 
 void ProcessScreen::onExecute() {
-    system("cls");
+    system("clear");
     display();
     process();
 }
@@ -40,9 +40,8 @@ void ProcessScreen::display() {
         std::cout << "Current instruction line: " << currentProcess->getCommandCounter() << std::endl;
         std::cout << "Lines of Code: " << currentProcess->getCommandCount() << "\n" << std::endl;
     }
-    else {
-        std::cout << "Finished!\n" << std::endl;
-    }
+
+    std::cout << "--------------------------------------------\n" << std::endl;
 
     for (int i = 0; i < commandHistory.size(); ++i) {
         std::cout << currentProcess->getName() <<"@csopesy:~$ " << commandHistory[i] << std::endl;
@@ -76,41 +75,49 @@ void ProcessScreen::handleInput(std::string command) {
 
     if (wordCount == 1) {
         if (command == "process-smi") {
-            std::cout << "Process: " << currentProcess->getName() << std::endl;
-            std::cout << "ID: " << currentProcess->getPId() << std::endl;
-            std::cout << "\n";
-            
-            if (currentProcess->getState() != Process::ProcessState::FINISHED) {
-                std::cout << "Current instruction line: " << currentProcess->getCommandCounter() << std::endl;
-                std::cout << "Lines of Code: " << currentProcess->getCommandCount() << "\n" << std::endl;
+            if (command == "process-smi") {
+                std::string smi_string = "\n";
+
+                smi_string += "Process: " + currentProcess->getName() + "\n";
+                smi_string += "ID: " + std::to_string(currentProcess->getPId()) + "\n";
+                smi_string += "\n";
+
+                if (currentProcess->getState() != Process::ProcessState::FINISHED) {
+                    smi_string += "Current instruction line: " + std::to_string(currentProcess->getCommandCounter()) + "\n";
+                    smi_string += "Lines of Code: " + std::to_string(currentProcess->getCommandCount());
+                } else {
+                    smi_string += "Finished!";
+                }
+
+                std::cout << smi_string; 
+                std::cout << "\n\n";
+                commandHistory.back() += "\n" + smi_string;
             }
-            else {
-                std::cout << "Finished!\n" << std::endl;
-            }
+
         }
         else if (command == "clear") {
             commandHistory.clear();
-            system("cls");
+            system("clear");
         }
         else if (command == "exit") {
             currentInstance->switchScreenBack();
         }
         else {
-            commandHistory.back() += "\nCommand not recognized";
-            std::cout << "Command not recognized\n" << std::endl;
+            commandHistory.back() += "\nCommand not recognized.";
+            std::cout << "Command not recognized.\n" << std::endl;
         }
     }
     else if (wordCount != 0) {
-        commandHistory.back() += "\nCommand not recognized";
-        std::cout << "Command not recognized\n" << std::endl;
+        commandHistory.back() += "\nCommand not recognized.";
+        std::cout << "Command not recognized.\n" << std::endl;
     }
 }
 
 bool ProcessScreen::isFinished() const {
     if (currentProcess->getState() == Process::ProcessState::FINISHED) {
-        return true;
+        return false;
     }
     else {
-        return false;
+        return true;
     }
 }
