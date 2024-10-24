@@ -11,6 +11,7 @@ public:
 	void onExecute() override; 
 	void display() override;
 	void process() override; 
+	bool isFinished() const;
 
 private:
 	std::shared_ptr<Process> currentProcess;

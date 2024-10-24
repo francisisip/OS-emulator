@@ -7,14 +7,16 @@
 
 Config* config = nullptr;
 
-Process::Process(std::string name){
+Process::Process(std::string name, int pid){
 	//TODO: make processes based off the the ticker
 	// Add to the ready queue
+	this->pid = pid;
 	this->name = name;
 	this->commandCount = setCommandCount();
 	this->commandCounter = 0;
+	this->cycleCount = 0;
 	timeCreated = std::chrono::system_clock::now();
-	this->finished = false;
+	currentState = ProcessState::READY;
 }
 
 int Process::getPId() const {
@@ -59,7 +61,10 @@ int Process::getCycleCount() const {
 }
 
 bool Process::isFinished() const {
-	return finished;
+	if (currentState == ProcessState::FINISHED) {
+		return true;
+	}
+	return false;
 }
 
 void Process::setCore(int coreID) {
@@ -76,8 +81,10 @@ unsigned int Process::setCommandCount() {
 	int lower_boundary = config->getMinIns();
 	int upper_boundary = config->getMaxIns();
 
-	// Generate random number of commands
-	commandCount = lower_boundary + (rand() % (upper_boundary - lower_boundary + 1));
+	std::random_device rd;  // Seed for the generator
+	std::mt19937 gen(rd()); // Mersenne Twister generator
+	std::uniform_int_distribution<> dis(lower_boundary, upper_boundary);
+	commandCount = dis(gen);
 
 	return commandCount;
 }
@@ -94,10 +101,9 @@ void Process::executeCurrentCommand() {
 	if (commandCounter < commandCount) {
 		moveToNextLine();
 	} else {
-		finished = true;
+		currentState = ProcessState::FINISHED;
 	}
 }
 void Process::moveToNextLine() {
 	commandCounter++;
 }
-

@@ -6,6 +6,7 @@
 #include "AConsole.h"
 #include "MenuScreen.h"
 #include "ProcessScreen.h"
+#include "Scheduler.h"
 
 class ConsoleManager {
 public:
@@ -16,8 +17,8 @@ public:
 	void run();
 	void switchScreen(const std::string& name);
 	void switchScreenBack();
-	void createProcessScreen(const std::string& name);
-	bool ifProcessScreenExists(const std::string& name);
+	void createProcessScreen(const std::string& name, bool makeSwitch);
+	bool ifProcessScreenExistsAndNotFinished(const std::string& name);
 
 private:
 	ConsoleManager();
@@ -25,6 +26,7 @@ private:
 	ConsoleManager& operator=(ConsoleManager const&) {return *this;};
 	static ConsoleManager* instance;
 
+	int pid_counter;
 	std::unordered_map<std::string, int> consoleNameTracker;
 	std::unordered_map<std::string, std::shared_ptr<AConsole>> consoles;
 	std::shared_ptr<AConsole> previousConsole; 

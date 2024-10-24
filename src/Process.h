@@ -2,6 +2,7 @@
 #include <vector>
 #include <chrono>
 #include <string>
+#include <random>
 #include "ICommand.h"
 #include "Config.h"
 
@@ -14,7 +15,7 @@ public:
 		WAITING,
 		FINISHED
 	};
-	Process(std::string name);
+	Process(std::string name, int pid);
 
 	// Getters
 	int getPId() const;
@@ -35,6 +36,7 @@ public:
 	
 	void executeCurrentCommand();
 	void moveToNextLine();
+	int setPID();
 
 
 private:
@@ -49,5 +51,4 @@ private:
 	int commandCounter; // indicate current command
 	int commandCount; // total no. of commands
 	int cycleCount; // no. of current cycles taken (for RR scheduling)
-	bool finished;
 };

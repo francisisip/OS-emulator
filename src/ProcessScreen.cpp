@@ -32,7 +32,7 @@ std::string getFormattedTime() {
 }
 
 void ProcessScreen::display() {
-    std::cout << currentProcess->getName().substr(2) << std::endl;
+    std::cout << currentProcess->getName()<< std::endl;
     std::cout << currentProcess->getCommandCounter() << "/"; 
     std::cout << currentProcess->getCommandCount() << std::endl;
     std::cout << getFormattedTime() << "\n" << std::endl;
@@ -48,7 +48,7 @@ void ProcessScreen::display() {
 void ProcessScreen::process() {
     std::string command;
     while (true) {
-        std::cout << currentProcess->getName().substr(2) + "@csopesy:~$ ";
+        std::cout << currentProcess->getName() + "@csopesy:~$ ";
         
         std::string command;
         std::getline(std::cin, command);
@@ -68,7 +68,20 @@ void ProcessScreen::handleInput(std::string command) {
 	}
 
     if (wordCount == 1) {
-        if (command == "clear") {
+        if (command == "process-smi") {
+            std::cout << "Process: " << currentProcess->getName() << std::endl;
+            std::cout << "ID: " << currentProcess->getPId() << std::endl;
+            std::cout << "\n";
+            
+            if (currentProcess->getState() != Process::ProcessState::FINISHED) {
+                std::cout << "Current instruction line: " << currentProcess->getCommandCounter() << std::endl;
+                std::cout << "Lines of Code: " << currentProcess->getCommandCount() << "\n" << std::endl;
+            }
+            else {
+                std::cout << "Finished!\n" << std::endl;
+            }
+        }
+        else if (command == "clear") {
             commandHistory.clear();
             system("clear");
         }
@@ -86,4 +99,11 @@ void ProcessScreen::handleInput(std::string command) {
     }
 }
 
-
+bool ProcessScreen::isFinished() const {
+    if (currentProcess->getState() == Process::ProcessState::FINISHED) {
+        return true;
+    }
+    else {
+        return false;
+    }
+}

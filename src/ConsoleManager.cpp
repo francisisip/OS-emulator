@@ -3,6 +3,7 @@
 ConsoleManager* ConsoleManager::instance = nullptr;
 
 ConsoleManager::ConsoleManager() {
+    this->pid_counter = 0;
     auto MAIN_MENU = std::make_shared<MenuScreen>();
     consoles[MAIN_MENU->getName()] = MAIN_MENU;
     consoleNameTracker[MAIN_MENU->getName()] = 1;
@@ -30,21 +31,27 @@ void ConsoleManager::run() {
 }
 
 
-void ConsoleManager::createProcessScreen(const std::string& baseName) {
-    std::string newName = "P_" + baseName;
+void ConsoleManager::createProcessScreen(const std::string& baseName, bool makeSwitch) {
+    Scheduler* scheduler = Scheduler::getInstance();
+    pid_counter++;
+
+    std::string newName = baseName;
     if (consoles.find(newName) != consoles.end()){
         int* count = &consoleNameTracker[newName];
 
         do {
-            newName = "P_" + baseName + "-" + std::to_string(*count);
+            newName = baseName + "-" + std::to_string(*count);
             (*count)++;
         } while (consoles.find(newName) != consoles.end());
     }
     
-    consoles[newName] = std::make_shared<ProcessScreen>(std::make_shared<Process>(newName));
-    // TODO: add this to the scheduler (ready queue)
+    Process newProcess(newName, pid_counter);
+    auto sharedProcessAddress = scheduler->addProcess(newProcess);
+    consoles[newName] = std::make_shared<ProcessScreen>(sharedProcessAddress);
     consoleNameTracker[newName] = 1;
-    switchScreen(newName);
+
+    if (makeSwitch)
+        switchScreen(newName);
 }
 
 void ConsoleManager::switchScreen(const std::string& name) {
@@ -61,11 +68,15 @@ void ConsoleManager::switchScreenBack() {
     currentConsole->onExecute();
 }
 
-bool ConsoleManager::ifProcessScreenExists(const std::string& name) {
+bool ConsoleManager::ifProcessScreenExistsAndNotFinished(const std::string& name) {
     auto item = consoles.find(name);
 
-    if (item == consoles.end())
+    if (item == consoles.end()) {
         return false;
-    else
+    }
+    else {
+        auto processScreen = std::dynamic_pointer_cast<ProcessScreen>(item->second);
+        processScreen->isFinished() ? false : true;
         return true;
+    }
 }
