@@ -6,6 +6,7 @@
 #include "AConsole.h"
 #include "MenuScreen.h"
 #include "ProcessScreen.h"
+#include "Scheduler.h"
 
 class ConsoleManager {
 public:
@@ -17,7 +18,7 @@ public:
 	void switchScreen(const std::string& name);
 	void switchScreenBack();
 	void createProcessScreen(const std::string& name);
-	bool ifProcessScreenExists(const std::string& name);
+	bool ifProcessScreenExistsAndNotFinished(const std::string& name);
 
 private:
 	ConsoleManager();

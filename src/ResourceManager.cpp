@@ -27,7 +27,18 @@ void ResourceManager::schedulerTestStart(){
 
     while (running)
     {
-        Process newProcess = Process("process_" + std::to_string(batchNum));
+        std::string newName = "process_" + std::to_string(batchNum);
+
+        // if (consoles.find(newName) != consoles.end()){
+        // int* count = &consoleNameTracker[newName];
+
+        // do {
+        //     newName = baseName + "-" + std::to_string(*count);
+        //     (*count)++;
+        // } while (consoles.find(newName) != consoles.end());
+        // }
+
+        Process newProcess = Process(newName);
         scheduler->addProcess(newProcess);
 
         std::this_thread::sleep_for(std::chrono::milliseconds(100 * (frequency+1)));

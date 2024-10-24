@@ -94,17 +94,26 @@ void MenuScreen::handleInput(std::string command) {
 				instance->createProcessScreen(param);
 			}
 			else if (instruction == "screen" && option == "-r") {
-				bool flag = instance->ifProcessScreenExists("P_" + param);
+				bool flag = instance->ifProcessScreenExistsAndNotFinished(param);
 
 				if (!flag) {
 					commandHistory.back() += "\nScreen not found";
-					std::cout << "Screen not found\n" << std::endl;
+					std::cout << "Process "<< param << " not found.\n" << std::endl;
 				}
 				else {
-					instance->switchScreen("P_" + param);
+					instance->switchScreen(param);
 				}
 			}
-			else if (instruction == "screen" && option == "-ls") {
+			else {
+				commandHistory.back() += "\nCommand not recognized";
+				std::cout << "Command not recognized\n" << std::endl;
+			}
+		}
+		else if (wordCount == 2) {
+			std::string instruction, option;
+			iss >> instruction >> option;
+
+			if (instruction == "screen" && option == "-ls") {
 				std::cout << "screen -ls called";
 				schedulerInstance->printSchedulerStatus();
 			}
@@ -119,7 +128,6 @@ void MenuScreen::handleInput(std::string command) {
 				resourceInstance->initializeScheduler();
 			}
 
-			// TODO: disallow all commands until initialize is called
 			else if (command == "scheduler-test") {
 				std::cout << "scheduler-test command recognized. Doing something\n" << std::endl;
 				resourceInstance->startSchedulerInThread();
