@@ -29,7 +29,7 @@ void MenuScreen::setInitialized(bool flag) {
 }
 
 void MenuScreen::onExecute() {
-	system("clear");
+	system("cls");
 	instance = ConsoleManager::getInstance();
 	schedulerInstance = Scheduler::getInstance();
 	resourceInstance = ResourceManager::getInstance();
@@ -129,10 +129,11 @@ void MenuScreen::handleInput(std::string command) {
 			}
 
 			else if (command == "scheduler-test") {
-				std::cout << "scheduler-test command recognized. Doing something\n" << std::endl;
+				std::cout << "scheduler-test command recognized. Creating processes...\n" << std::endl;
 				resourceInstance->startSchedulerInThread();
 			}
 			else if (command == "scheduler-stop") {
+				std::cout << "scheduler-stop command recognized. Creating processes...\n" << std::endl;
 				resourceInstance->schedulerTestStop();
 			}
 			else if (command == "report-util") {
@@ -142,7 +143,7 @@ void MenuScreen::handleInput(std::string command) {
 			}
 			else if (command == "clear") {
 				commandHistory.clear();
-				system("clear");
+				system("cls");
 			}
 			else if (command == "exit") {
 				exit(0);
