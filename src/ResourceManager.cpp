@@ -53,12 +53,11 @@ void ResourceManager::initializeScheduler(){
 
     int numCores = currentConfig->getNumCpu();
     std::string algorithm = currentConfig->getScheduler();
-    int quantumCycles = currentConfig->getQuantumCycles();
+    unsigned int quantumCycles = currentConfig->getQuantumCycles();
     scheduler->initializeCores(numCores);
+    scheduler->setSchedulerAlgorithm(algorithm);
+    scheduler->setQuantumCycles(quantumCycles);
     scheduler->run();
-    // FIXME: once this is setup, please uncomment these
-    // scheduler->setSchedulerAlgorithm(algorithm);
-    // scheduler->setQuantumCycles();
 }
 void ResourceManager::schedulerTestStop(){
     // stop scheduler test, if it's running

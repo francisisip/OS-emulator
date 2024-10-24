@@ -18,7 +18,6 @@ public:
     // Endlessly runs the scheduler
     void run();
     
-    // Initialize the scheduler
     
     // Initialize all the cores within the scheduler
     void initializeCores(int numCores);
@@ -30,19 +29,22 @@ public:
     const std::vector<std::unique_ptr<CPUCoreWorker>>& getCoreList() const;
     const std::vector<std::shared_ptr<Process>>& getProcessList() const;
 
+    void requeueProcess(std::shared_ptr<Process> process); 
+
+    void setSchedulerAlgorithm(std::string algorithm);
+    void setQuantumCycles(unsigned int cycles);
+    
     void printSchedulerStatus() const;
 
-    // TODO: All you enrique ;)
-    void setSchedulerAlgorithm();
-    void setQuantumCycles();
-    
 private:
     void startSchedulerLoop();
-    void runFCFS();
-
+    void schedFCFS();
+    void schedRR();
 
     bool running = false;
     static Scheduler* instance;
+    unsigned int quantumCycles;
+    std::string schedulerAlgo;
     std::vector<std::unique_ptr<CPUCoreWorker>> coreList;
     std::vector<std::shared_ptr<Process>> processList;
     std::queue<std::shared_ptr<Process>> readyQueue;
@@ -51,7 +53,4 @@ private:
     std::mutex readyQueueMutex; // Protect access to the readyQueue
     std::mutex processMutex; // Protect access to the list of processes
     std::thread schedulerThread;
-
-    
-
 };

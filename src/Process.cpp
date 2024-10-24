@@ -54,12 +54,20 @@ int Process::getCommandCount() const {
 	return commandCount;
 };
 
+int Process::getCycleCount() const {
+	return cycleCount;
+}
+
 bool Process::isFinished() const {
 	return finished;
 }
 
 void Process::setCore(int coreID) {
 	cpuCoreID = coreID;
+}
+
+void Process::resetCore() {
+	cpuCoreID = -1;
 }
 
 unsigned int Process::setCommandCount() {
@@ -72,6 +80,14 @@ unsigned int Process::setCommandCount() {
 	commandCount = lower_boundary + (rand() % (upper_boundary - lower_boundary + 1));
 
 	return commandCount;
+}
+
+void Process::incrementCycleCount() {
+	cycleCount++;
+}
+
+void Process::resetCycleCount() {
+	cycleCount = 0;
 }
 
 void Process::executeCurrentCommand() {

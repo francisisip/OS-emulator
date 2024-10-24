@@ -18,7 +18,7 @@ void Scheduler::addProcess(const Process& process) {
     readyQueue.push(newProcess);
 }
 
-void Scheduler::runFCFS() {
+void Scheduler::schedFCFS() {
     while (running) {
         std::lock_guard<std::mutex> lock(readyQueueMutex);
         // Check if ready queue is not empty
@@ -26,11 +26,32 @@ void Scheduler::runFCFS() {
             // If not empty, grab top process
             auto curProcess = readyQueue.front();
 
-
             // Find a core that is available
             auto coreId = getAvailableCore();
 
             if (coreId != -1) {
+                readyQueue.pop();
+                curProcess->setCore(coreId);
+                coreList[coreId]->setCurrentProcess(curProcess);
+            }
+        }
+    }
+};
+
+void Scheduler::schedRR() {
+    while (running) {
+        std::lock_guard<std::mutex> lock(readyQueueMutex);
+
+        // Check if ready queue is not empty
+        if (!readyQueue.empty()) {
+            // If not empty, grab top process
+            auto curProcess = readyQueue.front();
+
+            // Find available core
+            auto coreId = getAvailableCore();
+
+            if (coreId != -1) {
+                // TODO: maybe rr doesn't need it's own function?
                 readyQueue.pop();
                 curProcess->setCore(coreId);
                 coreList[coreId]->setCurrentProcess(curProcess);
@@ -53,16 +74,17 @@ void Scheduler::run() {
 
 
 void Scheduler::startSchedulerLoop() {
-
     // Continuously run scheduling algorithms
-    while (running) {
-        // For now, only run FCFS
-        runFCFS();
+    if (schedulerAlgo == "rr") {
+        while (running) {
+            schedRR();
+        }
+    } else {
+        while (running) {
+            schedFCFS();
+        }
     }
 }
-
-
-
 
 
 void Scheduler::initializeCores(int coreNum) {
@@ -89,6 +111,20 @@ const std::vector<std::unique_ptr<CPUCoreWorker>>& Scheduler::getCoreList() cons
 
 const std::vector<std::shared_ptr<Process>>& Scheduler::getProcessList() const {
     return processList;
+}
+
+void Scheduler::requeueProcess(std::shared_ptr<Process> process) {
+    std::lock_guard<std::mutex> lock(readyQueueMutex);
+    process->resetCore();
+    readyQueue.push(process);
+}
+
+void Scheduler::setSchedulerAlgorithm(std::string algorithm) {
+    schedulerAlgo = algorithm;
+}
+
+void Scheduler::setQuantumCycles(unsigned int cycles) {
+    quantumCycles = cycles;
 }
 
 void Scheduler::printSchedulerStatus() const{
