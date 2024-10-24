@@ -130,6 +130,18 @@ void Scheduler::setQuantumCycles(unsigned int cycles) {
 }
 
 void Scheduler::printSchedulerStatus() const{
+    int coresUsed = 0;
+	const std::vector<std::unique_ptr<CPUCoreWorker>>& cores = getCoreList();
+	for (const auto& core : cores) {
+		if (core->hasCurrentProcess()) {
+			coresUsed++;
+		}
+	}
+    int cpuCount = getCoreList().size();
+    double cpuUtilization = (cpuCount > 0) ? (static_cast<double>(coresUsed) / cpuCount) * 100 : 0.0;
+    std::cout << "CPU utilization: " << std::fixed << std::setprecision(2) << cpuUtilization << "%" << std::endl;
+    std::cout << "Cores Used: " << coresUsed << std::endl;
+    std::cout << "Cores available: " << cpuCount - coresUsed << std::endl;
     std::cout << "--------------------------------------------\n";
 	std::cout << "Running processes:\n";
 	const std::vector<std::shared_ptr<Process>>& processes = this->getProcessList();
