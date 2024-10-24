@@ -79,8 +79,10 @@ unsigned int Process::setCommandCount() {
 	int lower_boundary = config->getMinIns();
 	int upper_boundary = config->getMaxIns();
 
-	// Generate random number of commands
-	commandCount = lower_boundary + (rand() % (upper_boundary - lower_boundary + 1));
+	std::random_device rd;  // Seed for the generator
+	std::mt19937 gen(rd()); // Mersenne Twister generator
+	std::uniform_int_distribution<> dis(lower_boundary, upper_boundary);
+	commandCount = dis(gen);
 
 	return commandCount;
 }
