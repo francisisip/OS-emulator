@@ -45,6 +45,7 @@ private:
 	CommandList commandList;
 
 	int cpuCoreID = -1;
+	int pid_counter = 0;
 	ProcessState currentState;
 	std::chrono::system_clock::time_point timeCreated;
 	int commandCounter; // indicate current command

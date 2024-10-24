@@ -10,9 +10,11 @@ Config* config = nullptr;
 Process::Process(std::string name){
 	//TODO: make processes based off the the ticker
 	// Add to the ready queue
+	this->pid = pid_counter++;
 	this->name = name;
 	this->commandCount = setCommandCount();
 	this->commandCounter = 0;
+	this->cycleCount = 0;
 	timeCreated = std::chrono::system_clock::now();
 	currentState = ProcessState::READY;
 }
