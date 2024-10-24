@@ -34,7 +34,7 @@ public:
     void setSchedulerAlgorithm(std::string algorithm);
     void setQuantumCycles(unsigned int cycles);
     
-    void printSchedulerStatus() const;
+    std::string printSchedulerStatus() const;
 
 private:
     void startSchedulerLoop();
