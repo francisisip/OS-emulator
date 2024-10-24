@@ -68,7 +68,7 @@ void CPUCoreWorker::runProcess() {
             processCycles = currentProcess->getCycleCount();
             
             // If still under quantum cycles, execute the process
-            if (processCycles <= quantumCycles) {
+            if (processCycles < quantumCycles) {
                 currentProcess->executeCurrentCommand();
                 currentProcess->incrementCycleCount();
                 totalCPUTicks++;
