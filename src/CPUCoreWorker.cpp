@@ -41,20 +41,21 @@ void CPUCoreWorker::runCoreWorker(){
     }
 }
 
-// Returns true if the process finishes execution. False otherwise.
+
 void CPUCoreWorker::runProcess() {
     if (!currentProcess) return;
+    
     Scheduler* scheduler = Scheduler::getInstance();
     Config* currentConfig = Config::getInstance();
     int processCycles;
-    int delaysPerExec = currentConfig->getDelaysPerExec();
+    unsigned int delaysPerExec = currentConfig->getDelaysPerExec();
     std::string scheduleType = currentConfig->getScheduler();
     int quantumCycles = currentConfig->getQuantumCycles();
 
     if (scheduleType == "\"fcfs\"") {
         while(!currentProcess->isFinished()){
             currentProcess->executeCurrentCommand();
-            std::this_thread::sleep_for(std::chrono::milliseconds(100 * delaysPerExec + 1));
+            std::this_thread::sleep_for(std::chrono::milliseconds(100 * (delaysPerExec + 1)));
             totalCPUTicks++;
         }
 
@@ -71,11 +72,11 @@ void CPUCoreWorker::runProcess() {
                 currentProcess->executeCurrentCommand();
                 currentProcess->incrementCycleCount();
                 totalCPUTicks++;
-                std::this_thread::sleep_for(std::chrono::milliseconds(100 * delaysPerExec + 1));
+                std::this_thread::sleep_for(std::chrono::milliseconds(100 * (delaysPerExec + 1)));
             } else {
                 currentProcess->resetCycleCount();
                 totalCPUTicks++;
-                std::this_thread::sleep_for(std::chrono::milliseconds(100 * delaysPerExec + 1)); 
+                std::this_thread::sleep_for(std::chrono::milliseconds(100 * (delaysPerExec + 1))); 
 
                 scheduler->requeueProcess(currentProcess);
                 currentProcess.reset();
