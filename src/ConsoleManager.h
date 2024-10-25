@@ -17,7 +17,7 @@ public:
 	void run();
 	void switchScreen(const std::string& name);
 	void switchScreenBack();
-	void createProcessScreen(const std::string& name, bool makeSwitch);
+	std::string createProcessScreen(const std::string& name);
 	bool ifProcessScreenExistsAndNotFinished(const std::string& name);
 
 private:

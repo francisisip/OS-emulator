@@ -39,13 +39,13 @@ std::string Process::getCurrentCommandTime() const {
 	auto now = std::chrono::system_clock::now();
 	auto now_c = std::chrono::system_clock::to_time_t(now);
 	std::ostringstream oss;
-	oss << std::put_time(std::localtime(&now_c), "%Y-%m-%d %H:%M:%S");
+	oss << std::put_time(std::localtime(&now_c), "(%m/%d/%Y %I:%M:%S%p)");
 	return oss.str(); // Return current date and time as a string
 }
 std::string Process::getTimeCreated() const {
 	auto time_c = std::chrono::system_clock::to_time_t(timeCreated);
 	std::ostringstream oss;
-	oss << std::put_time(std::localtime(&time_c), "%Y-%m-%d %H:%M:%S%p");
+	oss << std::put_time(std::localtime(&time_c), "(%m/%d/%Y %I:%M:%S%p)");
 	return oss.str(); // Return formatted creation time
 }
 int Process::getCommandCounter() const {

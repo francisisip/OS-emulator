@@ -129,7 +129,9 @@ void Scheduler::setQuantumCycles(unsigned int cycles) {
     quantumCycles = cycles;
 }
 
-void Scheduler::printSchedulerStatus() const{
+std::string Scheduler::getSchedulerStatus() const{
+    std::string string_ls = "";
+
     int coresUsed = 0;
 	const std::vector<std::unique_ptr<CPUCoreWorker>>& cores = getCoreList();
 	for (const auto& core : cores) {
@@ -139,40 +141,50 @@ void Scheduler::printSchedulerStatus() const{
 	}
     int cpuCount = getCoreList().size();
     double cpuUtilization = (cpuCount > 0) ? (static_cast<double>(coresUsed) / cpuCount) * 100 : 0.0;
-    std::cout << "CPU utilization: " << std::fixed << std::setprecision(2) << cpuUtilization << "%" << std::endl;
-    std::cout << "Cores Used: " << coresUsed << std::endl;
-    std::cout << "Cores available: " << cpuCount - coresUsed << std::endl;
-    std::cout << "--------------------------------------------\n";
-	std::cout << "Running processes:\n";
-	const std::vector<std::shared_ptr<Process>>& processes = this->getProcessList();
-	for (const auto& process : processes) {
-		if (!process->isFinished()) {
-			std::cout << std::left << std::setw(20) << process->getName()
-				<< std::left << std::setw(30) << process->getTimeCreated();
 
-			// Check if the process has been assigned a core
-			if (process->getCPUCoreID() != -1) {
-				std::cout << "Core:   " << std::setw(15) << process->getCPUCoreID();
-				std::cout << std::left << std::setw(1) << process->getCommandCounter() << " / "
-					<< process->getCommandCount() << "\n";
-			}
-			else {
-				std::cout << "Core:   " << std::setw(15) << " "; // Adjust the width to maintain alignment
-				std::cout << std::left << std::setw(1) << process->getCommandCounter() << " / "
-					<< process->getCommandCount() << "\n";
-			}
-		}
-	}
+    std::ostringstream oss;
+    oss << std::fixed << std::setprecision(2) << cpuUtilization;
+    std::string formattedUtilization = oss.str();
 
-	std::cout << "\nFinished processes:\n";
-	for (const auto& process : processes) {
-		if (process->isFinished()) {
-			std::cout << std::left << std::setw(20) << process->getName()
-				<< std::left << std::setw(30) << process->getTimeCreated()
-				<< "Core:   " << std::setw(15) << "Finished"
-				<< std::left << std::setw(1) << process->getCommandCounter() << " / "
-				<< process->getCommandCount() << "\n";
-		}
-	}
-    std::cout << "--------------------------------------------\n";
+    string_ls += "CPU utilization: " + formattedUtilization  + "%\n";
+    string_ls += "Cores used: " + std::to_string(coresUsed) + "\n";
+    string_ls += "Cores available: " + std::to_string(cpuCount - coresUsed) + "\n";
+    string_ls += "\n--------------------------------------------\n";
+
+    string_ls += "Running processes:\n";
+    const std::vector<std::shared_ptr<Process>>& processes = this->getProcessList();
+        for (const auto& process : processes) {
+            if (!process->isFinished()) {
+                std::ostringstream oss;
+                oss << std::left << std::setw(20) << process->getName()
+                    << std::left << std::setw(30) << process->getTimeCreated();
+
+                if (process->getCPUCoreID() != -1) {
+                    oss << "Core:   " << std::setw(15) << process->getCPUCoreID();
+                    oss << std::left << std::setw(1) << process->getCommandCounter() << " / "
+                        << process->getCommandCount() << "\n";
+                } else {
+                    oss << "Core:   " << std::setw(15) << " "; 
+                    oss << std::left << std::setw(1) << process->getCommandCounter() << " / "
+                        << process->getCommandCount() << "\n";
+                }
+                string_ls += oss.str(); 
+            }
+        }
+
+    string_ls += "\nFinished processes:\n"; 
+    for (const auto& process : processes) {
+        if (process->isFinished()) {
+            std::ostringstream oss; 
+            oss << std::left << std::setw(20) << process->getName()
+                << std::left << std::setw(30) << process->getTimeCreated()
+                << "Core:   " << std::setw(15) << "Finished"
+                << std::left << std::setw(1) << process->getCommandCounter() << " / "
+                << process->getCommandCount() << "\n";
+            string_ls += oss.str(); 
+        }
+    }
+    string_ls += "--------------------------------------------";
+
+    return string_ls;
 }
