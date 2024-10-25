@@ -31,7 +31,7 @@ void ResourceManager::schedulerTestStart(){
         std::string newName = "process_" + std::to_string(batchNum);
         newName = consoleManager->createProcessScreen(newName);
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(100 * (frequency+1)));
+        std::this_thread::sleep_for(std::chrono::milliseconds(100 * (frequency)));
         batchNum++;
     }
 } 
