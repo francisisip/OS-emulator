@@ -3,6 +3,7 @@
 ConsoleManager* ConsoleManager::instance = nullptr;
 
 ConsoleManager::ConsoleManager() {
+    this->pid_counter = 0;
     auto MAIN_MENU = std::make_shared<MenuScreen>();
     consoles[MAIN_MENU->getName()] = MAIN_MENU;
     consoleNameTracker[MAIN_MENU->getName()] = 1;
@@ -10,7 +11,7 @@ ConsoleManager::ConsoleManager() {
 }
 
 ConsoleManager::~ConsoleManager() {
-
+    destroy();
 }
 
 ConsoleManager* ConsoleManager::getInstance() {
@@ -30,20 +31,26 @@ void ConsoleManager::run() {
 }
 
 
-void ConsoleManager::createProcessScreen(const std::string& baseName) {
-    std::string newName = "P_" + baseName;
+std::string ConsoleManager::createProcessScreen(const std::string& baseName) {
+    Scheduler* scheduler = Scheduler::getInstance();
+    pid_counter++;
+
+    std::string newName = baseName;
     if (consoles.find(newName) != consoles.end()){
         int* count = &consoleNameTracker[newName];
 
         do {
-            newName = "P_" + baseName + "-" + std::to_string(*count);
+            newName = baseName + "-" + std::to_string(*count);
             (*count)++;
         } while (consoles.find(newName) != consoles.end());
     }
     
-    consoles[newName] = std::make_shared<ProcessScreen>(std::make_shared<Process>(newName));
+    Process newProcess(newName, pid_counter);
+    auto sharedProcessAddress = scheduler->addProcess(newProcess);
+    consoles[newName] = std::make_shared<ProcessScreen>(sharedProcessAddress);
     consoleNameTracker[newName] = 1;
-    switchScreen(newName);
+
+    return newName;
 }
 
 void ConsoleManager::switchScreen(const std::string& name) {
@@ -60,11 +67,14 @@ void ConsoleManager::switchScreenBack() {
     currentConsole->onExecute();
 }
 
-bool ConsoleManager::ifProcessScreenExists(const std::string& name) {
+bool ConsoleManager::ifProcessScreenExistsAndNotFinished(const std::string& name) {
     auto item = consoles.find(name);
 
-    if (item == consoles.end())
+    if (item == consoles.end()) {
         return false;
-    else
-        return true;
+    }
+    else {
+        auto processScreen = std::dynamic_pointer_cast<ProcessScreen>(item->second);
+        return processScreen->isFinished();
+    }
 }

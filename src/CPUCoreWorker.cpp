@@ -1,9 +1,11 @@
 #include "CPUCoreWorker.h"
+#include "Scheduler.h"
 
 #include <utility>
 
 CPUCoreWorker::CPUCoreWorker(int coreId){
     this->coreId = coreId;
+    assignedProcess = false;
 }
 
 CPUCoreWorker::~CPUCoreWorker() {
@@ -29,33 +31,75 @@ int CPUCoreWorker::getCoreId() {
 
 void CPUCoreWorker::runCoreWorker(){
     while(true){
-        if(assignedProcess){
+        if(assignedProcess && currentProcess){
             runProcess();
+            // ITS RUNNING
         }
+        // ITS IDLE
         totalCPUTicks++;
+        // sleep based off CPU Cycle delay
     }
 }
 
-void CPUCoreWorker::runProcess(){
-    // FCFS
-    while(!currentProcess->isFinished()){
-        currentProcess->executeCurrentCommand();
-        std::this_thread::sleep_for(std::chrono::milliseconds(80));
+
+void CPUCoreWorker::runProcess() {
+    if (!currentProcess) return;
+    
+    Scheduler* scheduler = Scheduler::getInstance();
+    Config* currentConfig = Config::getInstance();
+    int processCycles;
+    unsigned int delaysPerExec = currentConfig->getDelaysPerExec();
+    std::string scheduleType = currentConfig->getScheduler();
+    int quantumCycles = currentConfig->getQuantumCycles();
+
+    if (scheduleType == "\"fcfs\"") {
+        while(!currentProcess->isFinished()){
+            currentProcess->executeCurrentCommand();
+            std::this_thread::sleep_for(std::chrono::milliseconds(100 * (delaysPerExec + 1)));
+            totalCPUTicks++;
+        }
+
+        currentProcess.reset();
+        assignedProcess = false;
+
+    } else if (scheduleType == "\"rr\"") {
+        while(!currentProcess->isFinished()) {
+            // At every CPU cycle, check if the process reached the max no. of quantum cycles
+            processCycles = currentProcess->getCycleCount();
+            
+            // If still under quantum cycles, execute the process
+            if (processCycles < quantumCycles) {
+                currentProcess->executeCurrentCommand();
+                currentProcess->incrementCycleCount();
+                totalCPUTicks++;
+                std::this_thread::sleep_for(std::chrono::milliseconds(100 * (delaysPerExec + 1)));
+            } else {
+                currentProcess->resetCycleCount();
+                totalCPUTicks++;
+                std::this_thread::sleep_for(std::chrono::milliseconds(100 * (delaysPerExec + 1))); 
+
+                scheduler->requeueProcess(currentProcess);
+                currentProcess.reset();
+                assignedProcess = false;
+                break;
+            }
+        }
+        // If process finished during quantum, do not requeue
+        if (currentProcess && currentProcess->isFinished()) {
+            currentProcess.reset();  // Process finished, reset the pointer
+            assignedProcess = false;
+        }
     }
-    currentProcess.reset();
-    assignedProcess = false;
 }
 
 void CPUCoreWorker::setCurrentProcess(std::shared_ptr<Process> process){
     std::lock_guard<std::mutex> lock(coreMutex);
-    // TODO: public method to set the current process stored in this CPU to the process. handled by scheduler
     currentProcess = process;
     assignedProcess = true;
 }
 
 bool CPUCoreWorker::hasCurrentProcess(){
     std::lock_guard<std::mutex> lock(coreMutex);
-    // TODO: check if there is a process assigned
     return assignedProcess;
 }
 

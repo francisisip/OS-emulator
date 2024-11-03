@@ -5,24 +5,18 @@
 #include <iomanip>
 #include <sstream>
 
-Process::Process(std::string name) {
-	this->name = name;
-}
+Config* config = nullptr;
 
-Process::Process(std::string name, int commandCount){
+Process::Process(std::string name, int pid){
+	//TODO: make processes based off the the ticker
+	// Add to the ready queue
+	this->pid = pid;
 	this->name = name;
-	this->commandCount = commandCount;
+	this->commandCount = setCommandCount();
 	this->commandCounter = 0;
-	// TODO: when created, make an empty log with Process name
-	// Create an empty log file with the process name
-	std::ofstream logFile(name + ".txt");
-	if (logFile) {
-		logFile << "Process name: " << name << std::endl;
-		logFile << "Logs:\n" << std::endl;
-		logFile.close();
-	}
-	// TODO: Fix this to make sure its right
+	this->cycleCount = 0;
 	timeCreated = std::chrono::system_clock::now();
+	currentState = ProcessState::READY;
 }
 
 int Process::getPId() const {
@@ -45,13 +39,13 @@ std::string Process::getCurrentCommandTime() const {
 	auto now = std::chrono::system_clock::now();
 	auto now_c = std::chrono::system_clock::to_time_t(now);
 	std::ostringstream oss;
-	oss << std::put_time(std::localtime(&now_c), "%Y-%m-%d %H:%M:%S");
+	oss << std::put_time(std::localtime(&now_c), "(%m/%d/%Y %I:%M:%S%p)");
 	return oss.str(); // Return current date and time as a string
 }
 std::string Process::getTimeCreated() const {
 	auto time_c = std::chrono::system_clock::to_time_t(timeCreated);
 	std::ostringstream oss;
-	oss << std::put_time(std::localtime(&time_c), "%Y-%m-%d %H:%M:%S%p");
+	oss << std::put_time(std::localtime(&time_c), "(%m/%d/%Y %I:%M:%S%p)");
 	return oss.str(); // Return formatted creation time
 }
 int Process::getCommandCounter() const {
@@ -62,30 +56,54 @@ int Process::getCommandCount() const {
 	return commandCount;
 };
 
+int Process::getCycleCount() const {
+	return cycleCount;
+}
+
 bool Process::isFinished() const {
-	return finished;
+	if (currentState == ProcessState::FINISHED) {
+		return true;
+	}
+	return false;
 }
 
 void Process::setCore(int coreID) {
 	cpuCoreID = coreID;
 }
 
+void Process::resetCore() {
+	cpuCoreID = -1;
+}
+
+unsigned int Process::setCommandCount() {
+	Config* config = Config::getInstance();
+
+	int lower_boundary = config->getMinIns();
+	int upper_boundary = config->getMaxIns();
+
+	std::random_device rd;  // Seed for the generator
+	std::mt19937 gen(rd()); // Mersenne Twister generator
+	std::uniform_int_distribution<> dis(lower_boundary, upper_boundary);
+	commandCount = dis(gen);
+
+	return commandCount;
+}
+
+void Process::incrementCycleCount() {
+	cycleCount++;
+}
+
+void Process::resetCycleCount() {
+	cycleCount = 0;
+}
+
 void Process::executeCurrentCommand() {
 	if (commandCounter < commandCount) {
 		moveToNextLine();
-
-		// Append to log with the specified format
-		std::ofstream logFile(name + ".txt", std::ios::app);
-		if (logFile) {
-			logFile << "(" << getCurrentCommandTime() << ") Core: " << cpuCoreID
-					<< " \"Hello world from " << name << "\"" << std::endl;
-			logFile.close();
-		}
 	} else {
-		finished = true;
+		currentState = ProcessState::FINISHED;
 	}
 }
 void Process::moveToNextLine() {
 	commandCounter++;
 }
-

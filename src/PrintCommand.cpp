@@ -1,4 +1,3 @@
-#pragma once
 #include "PrintCommand.h"
 
 PrintCommand::PrintCommand(int pid, std::string& toPrint) : ICommand(pid, PRINT)

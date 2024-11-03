@@ -2,7 +2,9 @@
 #include <vector>
 #include <chrono>
 #include <string>
+#include <random>
 #include "ICommand.h"
+#include "Config.h"
 
 class Process {
 public:
@@ -13,8 +15,7 @@ public:
 		WAITING,
 		FINISHED
 	};
-	Process(std::string name);
-	Process(std::string name, int commandCount);
+	Process(std::string name, int pid);
 
 	// Getters
 	int getPId() const;
@@ -25,11 +26,17 @@ public:
 	std::string getCurrentCommandTime() const;
 	int getCommandCounter() const; 
 	int getCommandCount() const;
+	int getCycleCount() const;
 	bool isFinished() const;
 	void setCore(int coreID);
-
+	void resetCore();
+	unsigned int setCommandCount();
+	void incrementCycleCount();
+	void resetCycleCount();
+	
 	void executeCurrentCommand();
 	void moveToNextLine();
+	int setPID();
 
 
 private:
@@ -43,5 +50,5 @@ private:
 	std::chrono::system_clock::time_point timeCreated;
 	int commandCounter; // indicate current command
 	int commandCount; // total no. of commands
-	bool finished;
+	int cycleCount; // no. of current cycles taken (for RR scheduling)
 };
