@@ -70,9 +70,6 @@ void Scheduler::run() {
     running = true;
     schedulerThread = std::thread(&Scheduler::startSchedulerLoop, this);
 }
-// void ConsoleManager::initialize() {
-//     instance = new ConsoleManager();
-// }
 
 
 void Scheduler::startSchedulerLoop() {

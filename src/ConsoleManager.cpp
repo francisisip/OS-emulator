@@ -45,7 +45,7 @@ std::string ConsoleManager::createProcessScreen(const std::string& baseName) {
         } while (consoles.find(newName) != consoles.end());
     }
     
-    Process newProcess(newName, pid_counter);
+    Process newProcess(newName, pid_counter, 4096);
     auto sharedProcessAddress = scheduler->addProcess(newProcess);
     consoles[newName] = std::make_shared<ProcessScreen>(sharedProcessAddress);
     consoleNameTracker[newName] = 1;

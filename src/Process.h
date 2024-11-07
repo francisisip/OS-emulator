@@ -28,6 +28,7 @@ public:
 	int getCommandCounter() const; 
 	int getCommandCount() const;
 	int getCycleCount() const;
+	size_t getMemoryRequired() const;
 	bool isFinished() const;
 	void setCore(int coreID);
 	void resetCore();
@@ -45,7 +46,6 @@ private:
 	std::string name;
 	typedef std::vector<std::shared_ptr<ICommand>> CommandList;
 	CommandList commandList;
-	size_t memoryRequired;
 
 	int cpuCoreID = -1;
 	ProcessState currentState;
@@ -53,4 +53,5 @@ private:
 	int commandCounter; // indicate current command
 	int commandCount; // total no. of commands
 	int cycleCount; // no. of current cycles taken (for RR scheduling)
+	size_t memoryRequired;
 };

@@ -74,6 +74,10 @@ int Process::getCycleCount() const {
 	return cycleCount;
 }
 
+size_t Process::getMemoryRequired() const {
+	return memoryRequired;
+}
+
 bool Process::isFinished() const {
 	if (currentState == ProcessState::FINISHED) {
 		return true;

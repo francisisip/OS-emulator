@@ -3,6 +3,8 @@
 #include "Scheduler.h"
 #include "Config.h"
 #include "ResourceManager.h"
+#include "FlatMemoryAllocator.h"
+
 #include <iostream>
 
 void tickCPUCycle() {
@@ -20,6 +22,7 @@ int main()
 	ConsoleManager::initialize();
 	Config::initialize();
 	ResourceManager::initialize();
+	FlatMemoryAllocator::initialize(16384); // initialize here for now.
 
 	std::thread CPUCycleThread(tickCPUCycle);
 	

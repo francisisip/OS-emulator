@@ -3,13 +3,16 @@
 #include <sstream>
 #include "ProcessScreen.h"
 #include "ConsoleManager.h"
+#include "FlatMemoryAllocator.h"
 #include <iomanip>
 
 ConsoleManager* currentInstance;
+FlatMemoryAllocator* allocator;
 
 ProcessScreen::ProcessScreen(std::shared_ptr<Process> process): AConsole(process->getName()) {
     currentProcess = process;
     currentInstance = ConsoleManager::getInstance();
+    allocator = FlatMemoryAllocator::getInstance();
 }
 
 ProcessScreen::~ProcessScreen() {
@@ -34,6 +37,8 @@ std::string getFormattedTime() {
 void ProcessScreen::display() {
     std::cout << "Process: " << currentProcess->getName() << std::endl;
     std::cout << "ID: " << currentProcess->getPId() << std::endl;
+    // Visualize process memory here:
+    std::cout << "Memory Required:" << currentProcess->getMemoryRequired() << std::endl;
     std::cout << "\n";
     
     if (currentProcess->getState() != Process::ProcessState::FINISHED) {
