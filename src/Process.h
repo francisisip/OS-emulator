@@ -16,6 +16,7 @@ public:
 		FINISHED
 	};
 	Process(std::string name, int pid);
+	Process(std::string name, int pid, size_t memoryRequired);
 
 	// Getters
 	int getPId() const;
@@ -44,6 +45,7 @@ private:
 	std::string name;
 	typedef std::vector<std::shared_ptr<ICommand>> CommandList;
 	CommandList commandList;
+	size_t memoryRequired;
 
 	int cpuCoreID = -1;
 	ProcessState currentState;

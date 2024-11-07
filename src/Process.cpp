@@ -7,11 +7,25 @@
 
 Config* config = nullptr;
 
+// Constructor for Process without specified memory size
 Process::Process(std::string name, int pid){
+	//TODO: make processes based off the the ticker
+	this->pid = pid;
+	this->name = name;
+	this->commandCount = setCommandCount();
+	this->commandCounter = 0;
+	this->cycleCount = 0;
+	timeCreated = std::chrono::system_clock::now();
+	currentState = ProcessState::READY;
+}
+
+// Constructor for Process with specified memory size
+Process::Process(std::string name, int pid, size_t memoryRequired){
 	//TODO: make processes based off the the ticker
 	// Add to the ready queue
 	this->pid = pid;
 	this->name = name;
+	this->memoryRequired = memoryRequired;
 	this->commandCount = setCommandCount();
 	this->commandCounter = 0;
 	this->cycleCount = 0;
