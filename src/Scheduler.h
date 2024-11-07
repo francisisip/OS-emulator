@@ -16,6 +16,7 @@ public:
 
     std::shared_ptr<Process> addProcess(const Process& process);
     void requeueProcess(std::shared_ptr<Process> process); 
+    bool canAllocateMemory(size_t memoryRequired);
 
     const std::vector<std::unique_ptr<CPUCoreWorker>>& getCoreList() const;
     const std::vector<std::shared_ptr<Process>>& getProcessList() const;

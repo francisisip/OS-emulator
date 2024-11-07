@@ -3,16 +3,14 @@
 #include <sstream>
 #include "ProcessScreen.h"
 #include "ConsoleManager.h"
-#include "FlatMemoryAllocator.h"
 #include <iomanip>
 
 ConsoleManager* currentInstance;
-FlatMemoryAllocator* allocator;
+Scheduler* scheduler;
 
 ProcessScreen::ProcessScreen(std::shared_ptr<Process> process): AConsole(process->getName()) {
     currentProcess = process;
     currentInstance = ConsoleManager::getInstance();
-    allocator = FlatMemoryAllocator::getInstance();
 }
 
 ProcessScreen::~ProcessScreen() {
@@ -35,6 +33,8 @@ std::string getFormattedTime() {
 }
 
 void ProcessScreen::display() {
+    scheduler = Scheduler::getInstance();
+
     std::cout << "Process: " << currentProcess->getName() << std::endl;
     std::cout << "ID: " << currentProcess->getPId() << std::endl;
     // Visualize process memory here:
@@ -45,6 +45,9 @@ void ProcessScreen::display() {
         std::cout << "Current instruction line: " << currentProcess->getCommandCounter() << std::endl;
         std::cout << "Lines of Code: " << currentProcess->getCommandCount() << "\n" << std::endl;
     }
+
+    // TODO: fix segmentation fault happening here.
+    // std::cout << "Is process storeable in memory: " << scheduler->canAllocateMemory(currentProcess->getMemoryRequired()) << '\n';
 
     std::cout << "--------------------------------------------\n" << std::endl;
 

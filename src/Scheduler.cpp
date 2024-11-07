@@ -1,12 +1,16 @@
 #include "Scheduler.h"
+#include "FlatMemoryAllocator.h"
 #include <iomanip>
 
 Scheduler* Scheduler::instance = nullptr;
+FlatMemoryAllocator* allocator = nullptr;
+
 Scheduler::Scheduler() {
 }
 
 void Scheduler::initialize() {
     instance = new Scheduler();
+    allocator = FlatMemoryAllocator::getInstance();
 } 
 
 Scheduler* Scheduler::getInstance(){
@@ -41,6 +45,16 @@ void Scheduler::requeueProcess(std::shared_ptr<Process> process) {
     std::lock_guard<std::mutex> lock(readyQueueMutex);
     process->resetCore();
     readyQueue.push(process);
+}
+
+// TODO: Implement a first-fit memory checker.
+bool Scheduler::canAllocateMemory(size_t memoryRequired) {
+    if (allocator->allocate(memoryRequired)) {
+        std::cout << "AWESOME!!!\n";
+        return true;
+    } 
+    std::cout << "not so awesome...\n";
+    return false;
 }
 
 const std::vector<std::unique_ptr<CPUCoreWorker>>& Scheduler::getCoreList() const {
@@ -117,9 +131,6 @@ int Scheduler::getAvailableCore() {
             return core->getCoreId();
         }
     }
-    
-    // TODO: Implement the memory check here?
-
 
     return -1;
 }
@@ -132,8 +143,6 @@ void Scheduler::setSchedulerAlgorithm(std::string algorithm) {
 void Scheduler::setQuantumCycles(unsigned int cycles) {
     quantumCycles = cycles;
 }
-
-// TODO: Implement a first-fit memory checker.
 
 void Scheduler::startSchedulerLoop() {
     // Continuously run scheduling algorithms
@@ -159,6 +168,8 @@ void Scheduler::schedFCFS() {
             // Find a core that is available
             auto coreId = getAvailableCore();
 
+            // TODO: call the memory checker here
+
             if (coreId != -1) {
                 readyQueue.pop();
                 curProcess->setCore(coreId);
@@ -180,7 +191,7 @@ void Scheduler::schedRR() {
             // Find available core
             auto coreId = getAvailableCore();
 
-            // TODO: check if there is enough memory.
+            // TODO: call the memory checker here
 
             if (coreId != -1) {
                 readyQueue.pop();
@@ -190,3 +201,4 @@ void Scheduler::schedRR() {
         }
     }
 }
+
