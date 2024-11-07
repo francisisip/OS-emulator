@@ -22,7 +22,6 @@ Process::Process(std::string name, int pid){
 // Constructor for Process with specified memory size
 Process::Process(std::string name, int pid, size_t memoryRequired){
 	//TODO: make processes based off the the ticker
-	// Add to the ready queue
 	this->pid = pid;
 	this->name = name;
 	this->memoryRequired = memoryRequired;

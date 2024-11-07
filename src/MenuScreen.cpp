@@ -190,7 +190,6 @@ void MenuScreen::handleInput(std::string command) {
 				setInitialized(true);
 				commandHistory.back() += "\nInitialized OS, all systems running.";
 				std::cout << "Initialized OS, all systems running.\n" << std::endl;
-				// TODO: Implement initialize. start scheduler
 				// ResourceManager initialize = Scheduler, which will set its cpu cores, scheduling type
 				resourceInstance->initializeScheduler();
 			}

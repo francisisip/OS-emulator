@@ -22,7 +22,9 @@ int main()
 	ConsoleManager::initialize();
 	Config::initialize();
 	ResourceManager::initialize();
-	FlatMemoryAllocator::initialize(16384); // initialize here for now.
+
+	// TODO: Grab the memory allocator maxSize from the config
+	FlatMemoryAllocator::initialize(16384);
 
 	std::thread CPUCycleThread(tickCPUCycle);
 	

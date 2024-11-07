@@ -3,12 +3,29 @@
 
 Scheduler* Scheduler::instance = nullptr;
 Scheduler::Scheduler() {
-    // TODO: add constructor logic
 }
+
+void Scheduler::initialize() {
+    instance = new Scheduler();
+} 
 
 Scheduler* Scheduler::getInstance(){
     return instance;
 };
+
+void Scheduler::run() {
+    running = true;
+    schedulerThread = std::thread(&Scheduler::startSchedulerLoop, this);
+}
+
+void Scheduler::initializeCores(int coreNum) {
+    for (int i = 0; i < coreNum; i++) {
+        // Initialize a new core then add it to coreList 
+        coreList.push_back(std::make_unique<CPUCoreWorker>(i));
+        // Initialize the most recently created 
+        coreList.back()->initialize();
+    }
+}
 
 std::shared_ptr<Process> Scheduler::addProcess(const Process& process) {
     std::lock_guard<std::mutex> lock(processMutex);
@@ -20,88 +37,10 @@ std::shared_ptr<Process> Scheduler::addProcess(const Process& process) {
     return newProcess;
 }
 
-void Scheduler::schedFCFS() {
-    while (running) {
-        std::lock_guard<std::mutex> lock(readyQueueMutex);
-        // Check if ready queue is not empty
-        if (!readyQueue.empty()) {
-            // If not empty, grab top process
-            auto curProcess = readyQueue.front();
-
-            // Find a core that is available
-            auto coreId = getAvailableCore();
-
-            if (coreId != -1) {
-                readyQueue.pop();
-                curProcess->setCore(coreId);
-                coreList[coreId]->setCurrentProcess(curProcess);
-            }
-        }
-    }
-};
-
-void Scheduler::schedRR() {
-    while (running) {
-        std::lock_guard<std::mutex> lock(readyQueueMutex);
-
-        // Check if ready queue is not empty
-        if (!readyQueue.empty()) {
-            // If not empty, grab top process
-            auto curProcess = readyQueue.front();
-
-            // Find available core
-            auto coreId = getAvailableCore();
-
-            if (coreId != -1) {
-                // TODO: maybe rr doesn't need it's own function?
-                readyQueue.pop();
-                curProcess->setCore(coreId);
-                coreList[coreId]->setCurrentProcess(curProcess);
-            }
-        }
-    }
-};
-
-void Scheduler::initialize() {
-    instance = new Scheduler();
-} 
-
-void Scheduler::run() {
-    running = true;
-    schedulerThread = std::thread(&Scheduler::startSchedulerLoop, this);
-}
-
-
-void Scheduler::startSchedulerLoop() {
-    // Continuously run scheduling algorithms
-    if (schedulerAlgo == "rr") {
-        while (running) {
-            schedRR();
-        }
-    } else {
-        while (running) {
-            schedFCFS();
-        }
-    }
-}
-
-
-void Scheduler::initializeCores(int coreNum) {
-    for (int i = 0; i < coreNum; i++) {
-        // Initialize a new core then add it to coreList 
-        coreList.push_back(std::make_unique<CPUCoreWorker>(i));
-        // Initialize the most recently created 
-        coreList.back()->initialize();
-    }
-}
-
-int Scheduler::getAvailableCore() {
-    for (auto& core: coreList) {
-        if (!core->hasCurrentProcess()) {
-            return core->getCoreId();
-        }
-    }
-    return -1;
+void Scheduler::requeueProcess(std::shared_ptr<Process> process) {
+    std::lock_guard<std::mutex> lock(readyQueueMutex);
+    process->resetCore();
+    readyQueue.push(process);
 }
 
 const std::vector<std::unique_ptr<CPUCoreWorker>>& Scheduler::getCoreList() const {
@@ -110,20 +49,6 @@ const std::vector<std::unique_ptr<CPUCoreWorker>>& Scheduler::getCoreList() cons
 
 const std::vector<std::shared_ptr<Process>>& Scheduler::getProcessList() const {
     return processList;
-}
-
-void Scheduler::requeueProcess(std::shared_ptr<Process> process) {
-    std::lock_guard<std::mutex> lock(readyQueueMutex);
-    process->resetCore();
-    readyQueue.push(process);
-}
-
-void Scheduler::setSchedulerAlgorithm(std::string algorithm) {
-    schedulerAlgo = algorithm;
-}
-
-void Scheduler::setQuantumCycles(unsigned int cycles) {
-    quantumCycles = cycles;
 }
 
 std::string Scheduler::getSchedulerStatus() const{
@@ -184,4 +109,84 @@ std::string Scheduler::getSchedulerStatus() const{
     string_ls += "--------------------------------------------";
 
     return string_ls;
+}
+
+int Scheduler::getAvailableCore() {
+    for (auto& core: coreList) {
+        if (!core->hasCurrentProcess()) {
+            return core->getCoreId();
+        }
+    }
+    
+    // TODO: Implement the memory check here?
+
+
+    return -1;
+}
+
+
+void Scheduler::setSchedulerAlgorithm(std::string algorithm) {
+    schedulerAlgo = algorithm;
+}
+
+void Scheduler::setQuantumCycles(unsigned int cycles) {
+    quantumCycles = cycles;
+}
+
+// TODO: Implement a first-fit memory checker.
+
+void Scheduler::startSchedulerLoop() {
+    // Continuously run scheduling algorithms
+    if (schedulerAlgo == "rr") {
+        while (running) {
+            schedRR();
+        }
+    } else {
+        while (running) {
+            schedFCFS();
+        }
+    }
+}
+
+void Scheduler::schedFCFS() {
+    while (running) {
+        std::lock_guard<std::mutex> lock(readyQueueMutex);
+        // Check if ready queue is not empty
+        if (!readyQueue.empty()) {
+            // If not empty, grab top process
+            auto curProcess = readyQueue.front();
+
+            // Find a core that is available
+            auto coreId = getAvailableCore();
+
+            if (coreId != -1) {
+                readyQueue.pop();
+                curProcess->setCore(coreId);
+                coreList[coreId]->setCurrentProcess(curProcess);
+            }
+        }
+    }
+}
+
+void Scheduler::schedRR() {
+    while (running) {
+        std::lock_guard<std::mutex> lock(readyQueueMutex);
+
+        // Check if ready queue is not empty
+        if (!readyQueue.empty()) {
+            // If not empty, grab top process
+            auto curProcess = readyQueue.front();
+
+            // Find available core
+            auto coreId = getAvailableCore();
+
+            // TODO: check if there is enough memory.
+
+            if (coreId != -1) {
+                readyQueue.pop();
+                curProcess->setCore(coreId);
+                coreList[coreId]->setCurrentProcess(curProcess);
+            }
+        }
+    }
 }

@@ -20,7 +20,7 @@ void FlatMemoryAllocator::initialize(size_t maxSize) {
     instance->initializeMemory(maxSize);
 }
 
-
+// Implements first-fit approach by default for now.
 void* FlatMemoryAllocator::allocate(size_t size) {
     for (size_t i = 0; i <= maxSize - size; i++) {
         if (!allocationMap[i] && canAllocateAt(i, size)) {
@@ -41,7 +41,6 @@ void FlatMemoryAllocator::deallocate(void* ptr) {
 std::string FlatMemoryAllocator::visualizeMemory() {
     return std::string(memory.begin(), memory.end());
 }
-
 
 void FlatMemoryAllocator::initializeMemory(size_t maxSize) {
     memory.resize(maxSize, '.');
