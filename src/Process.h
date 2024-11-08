@@ -16,6 +16,7 @@ public:
 		FINISHED
 	};
 	Process(std::string name, int pid);
+	Process(std::string name, int pid, size_t memoryRequired);
 
 	// Getters
 	int getPId() const;
@@ -27,6 +28,7 @@ public:
 	int getCommandCounter() const; 
 	int getCommandCount() const;
 	int getCycleCount() const;
+	size_t getMemoryRequired() const;
 	bool isFinished() const;
 	void setCore(int coreID);
 	void resetCore();
@@ -51,4 +53,5 @@ private:
 	int commandCounter; // indicate current command
 	int commandCount; // total no. of commands
 	int cycleCount; // no. of current cycles taken (for RR scheduling)
+	size_t memoryRequired;
 };

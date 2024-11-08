@@ -3,6 +3,8 @@
 #include "Scheduler.h"
 #include "Config.h"
 #include "ResourceManager.h"
+#include "FlatMemoryAllocator.h"
+
 #include <iostream>
 
 void tickCPUCycle() {
@@ -20,6 +22,9 @@ int main()
 	ConsoleManager::initialize();
 	Config::initialize();
 	ResourceManager::initialize();
+
+	// TODO: Grab the memory allocator maxSize from the config
+	FlatMemoryAllocator::initialize();
 
 	std::thread CPUCycleThread(tickCPUCycle);
 	

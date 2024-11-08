@@ -6,6 +6,7 @@
 #include <iomanip>
 
 ConsoleManager* currentInstance;
+Scheduler* scheduler;
 
 ProcessScreen::ProcessScreen(std::shared_ptr<Process> process): AConsole(process->getName()) {
     currentProcess = process;
@@ -32,14 +33,21 @@ std::string getFormattedTime() {
 }
 
 void ProcessScreen::display() {
+    scheduler = Scheduler::getInstance();
+
     std::cout << "Process: " << currentProcess->getName() << std::endl;
     std::cout << "ID: " << currentProcess->getPId() << std::endl;
+    // Visualize process memory here:
+    std::cout << "Memory Required:" << currentProcess->getMemoryRequired() << std::endl;
     std::cout << "\n";
     
     if (currentProcess->getState() != Process::ProcessState::FINISHED) {
         std::cout << "Current instruction line: " << currentProcess->getCommandCounter() << std::endl;
         std::cout << "Lines of Code: " << currentProcess->getCommandCount() << "\n" << std::endl;
     }
+
+    // TODO: fix segmentation fault happening here.
+    std::cout << "Is process storeable in memory: " << scheduler->canAllocateMemory(currentProcess->getMemoryRequired()) << '\n';
 
     std::cout << "--------------------------------------------\n" << std::endl;
 

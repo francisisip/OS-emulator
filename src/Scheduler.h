@@ -9,31 +9,21 @@ class Scheduler {
 public:
     Scheduler();
 
-    // Getters
-    static Scheduler* getInstance();
     static void initialize();
-    // Add a Process
-    std::shared_ptr<Process> addProcess(const Process& process);
-
-    // Endlessly runs the scheduler
+    static Scheduler* getInstance();
     void run();
-    
-    
-    // Initialize all the cores within the scheduler
     void initializeCores(int numCores);
 
-
-    // Find an available core
-    int getAvailableCore();
+    std::shared_ptr<Process> addProcess(const Process& process);
+    void requeueProcess(std::shared_ptr<Process> process); 
+    bool canAllocateMemory(size_t memoryRequired);
 
     const std::vector<std::unique_ptr<CPUCoreWorker>>& getCoreList() const;
     const std::vector<std::shared_ptr<Process>>& getProcessList() const;
-
-    void requeueProcess(std::shared_ptr<Process> process); 
+    int getAvailableCore();
 
     void setSchedulerAlgorithm(std::string algorithm);
     void setQuantumCycles(unsigned int cycles);
-    
     std::string getSchedulerStatus() const;
 
 private:

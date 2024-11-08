@@ -24,6 +24,9 @@ public:
     unsigned int getMinIns() const;
     unsigned int getMaxIns() const;
     unsigned int getDelaysPerExec() const;
+    unsigned int getMaxMemory() const;
+    unsigned int getMemoryPerFrame() const;
+    unsigned int getMemoryPerProcess() const;
     
 private:
     // Configuration parameters
@@ -35,6 +38,9 @@ private:
     unsigned int minIns;
     unsigned int maxIns;
     unsigned int delaysPerExec;
+    unsigned int maxMemory;
+    unsigned int memoryPerFrame;
+    unsigned int memoryPerProcess;
     unsigned int validateRange(const std::string& paramName, unsigned int value, unsigned int min, unsigned int max);
     std::string validateScheduler(const std::string& scheduler);
     int validateNumCpu(int numCpu);
