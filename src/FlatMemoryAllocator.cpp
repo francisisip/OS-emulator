@@ -15,8 +15,10 @@ FlatMemoryAllocator* FlatMemoryAllocator::getInstance() {
     return instance;
 }
 
-void FlatMemoryAllocator::initialize(size_t maxSize) {
+void FlatMemoryAllocator::initialize() {
     instance = new FlatMemoryAllocator();
+    //maxSize = Config::getMaxSize();
+    size_t maxSize = 16384;
     instance->initializeMemory(maxSize);
 }
 

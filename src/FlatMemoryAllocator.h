@@ -1,8 +1,10 @@
 #pragma once
 
 #include <vector>
+#include <string>
 #include <unordered_map>
 #include "IMemoryAllocator.h"
+#include "Config.h"
 
 class FlatMemoryAllocator : public IMemoryAllocator {
 public:
@@ -11,7 +13,7 @@ public:
 
     static FlatMemoryAllocator* getInstance();
 
-    static void initialize(size_t maxSize);
+    static void initialize();
     void* allocate(size_t size) override;
     void deallocate(void* ptr) override;
     std::string visualizeMemory() override;

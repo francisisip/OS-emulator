@@ -41,6 +41,9 @@ void Config::loadConfig(const std::string& filename) {
     minIns = validateRange("min-ins", std::stoul(configMap["min-ins"]), 1, UINT32_MAX);
     maxIns = validateRange("max-ins", std::stoul(configMap["max-ins"]), 1, UINT32_MAX);
     delaysPerExec = validateRange("delay-per-exec", std::stoul(configMap["delay-per-exec"]), 0, UINT32_MAX);
+    maxMemory = validateRange("max-overall-mem", std::stoul(configMap["max-overall-mem"]), 0, UINT32_MAX);
+    memoryPerFrame = validateRange("mem-per-frame", std::stoul(configMap["mem-per-frame"]), 0, UINT32_MAX);
+    memoryPerProcess = validateRange("mem-per-proc", std::stoul(configMap["mem-per-proc"]), 0, UINT32_MAX);
 
     // Additional logic to ensure `min-ins` <= `max-ins`
     if (minIns > maxIns) {
@@ -79,3 +82,6 @@ unsigned int Config::getBatchProcessFreq() const { return batchProcessFreq; }
 unsigned int Config::getMinIns() const { return minIns; }
 unsigned int Config::getMaxIns() const { return maxIns; }
 unsigned int Config::getDelaysPerExec() const { return delaysPerExec; }
+unsigned int Config::getMaxMemory() const { return maxMemory; }
+unsigned int Config::getMemoryPerFrame() const { return memoryPerFrame; }
+unsigned int Config::getMemoryPerProcess() const { return memoryPerProcess; }
