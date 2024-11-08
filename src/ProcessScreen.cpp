@@ -47,7 +47,7 @@ void ProcessScreen::display() {
     }
 
     // TODO: fix segmentation fault happening here.
-    // std::cout << "Is process storeable in memory: " << scheduler->canAllocateMemory(currentProcess->getMemoryRequired()) << '\n';
+    std::cout << "Is process storeable in memory: " << scheduler->canAllocateMemory(currentProcess->getMemoryRequired()) << '\n';
 
     std::cout << "--------------------------------------------\n" << std::endl;
 

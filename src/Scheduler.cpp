@@ -10,7 +10,6 @@ Scheduler::Scheduler() {
 
 void Scheduler::initialize() {
     instance = new Scheduler();
-    allocator = FlatMemoryAllocator::getInstance();
 } 
 
 Scheduler* Scheduler::getInstance(){
@@ -49,11 +48,19 @@ void Scheduler::requeueProcess(std::shared_ptr<Process> process) {
 
 // TODO: Implement a first-fit memory checker.
 bool Scheduler::canAllocateMemory(size_t memoryRequired) {
-    if (allocator->allocate(memoryRequired)) {
-        std::cout << "AWESOME!!!\n";
-        return true;
-    } 
-    std::cout << "not so awesome...\n";
+    allocator = FlatMemoryAllocator::getInstance();
+
+    if (!allocator) {
+        std::cerr << "Error: Allocator not initialized.\n";
+        return false;
+    } else {
+        if (allocator->allocate(memoryRequired)) {
+            std::cout << "AWESOME!!!\n";
+            return true;
+        }
+        std::cout << "not so awesome...\n";
+    }
+
     return false;
 }
 
