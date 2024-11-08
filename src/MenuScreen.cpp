@@ -7,6 +7,7 @@
 #include "ConsoleManager.h"
 #include "Scheduler.h"
 #include "ResourceManager.h"
+#include "FlatMemoryAllocator.h"
 
 ConsoleManager* instance;
 Scheduler* schedulerInstance;
@@ -116,7 +117,7 @@ void MenuScreen::handleInput(std::string command) {
 			if (instruction == "screen" && option == "-ls") {
 				commandHistory.back() += schedulerInstance->getSchedulerStatus();
 				std::cout << "\n" << schedulerInstance->getSchedulerStatus() << "\n\n";
-
+				std::cout << FlatMemoryAllocator::getInstance()->visualizeMemory();
 			}
 			else {
 				commandHistory.back() += "\nCommand not recognized.";

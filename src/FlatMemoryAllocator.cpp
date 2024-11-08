@@ -23,14 +23,15 @@ void FlatMemoryAllocator::initialize() {
 }
 
 // Implements first-fit approach by default for now.
-bool FlatMemoryAllocator::allocate(size_t size) {
+void* FlatMemoryAllocator::allocate(size_t size) {
+    // check first if memory is allocated already for the process
     for (size_t i = 0; i <= maxSize - size; i++) {
         if (!allocationMap[i] && canAllocateAt(i, size)) {
             allocateAt(i, size);
-            return true;
+            return &memory[i];
         }
     }
-    return false;
+    return nullptr;
 }
 
 void FlatMemoryAllocator::deallocate(void* ptr) {

@@ -14,7 +14,7 @@ public:
     static FlatMemoryAllocator* getInstance();
 
     static void initialize();
-    bool allocate(size_t size) override;
+    void* allocate(size_t size) override;
     void deallocate(void* ptr) override;
     std::string visualizeMemory() override;
     size_t getMaxSize();

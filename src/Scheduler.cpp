@@ -54,7 +54,7 @@ bool Scheduler::canAllocateMemory(size_t memoryRequired) {
         std::cerr << "Error: Allocator not initialized.\n";
         return false;
     } else {
-        if (allocator->allocate(memoryRequired)) {
+        if (allocator->allocate(memoryRequired) != nullptr) {
             // std::cout << "AWESOME!!!\n";
             return true;
         }
