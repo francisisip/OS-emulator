@@ -1,3 +1,4 @@
+#include <iostream>
 #include "FlatMemoryAllocator.h"
 
 FlatMemoryAllocator* FlatMemoryAllocator::instance = nullptr;
@@ -23,14 +24,14 @@ void FlatMemoryAllocator::initialize() {
 }
 
 // Implements first-fit approach by default for now.
-void* FlatMemoryAllocator::allocate(size_t size) {
+bool FlatMemoryAllocator::allocate(size_t size) {
     for (size_t i = 0; i <= maxSize - size; i++) {
         if (!allocationMap[i] && canAllocateAt(i, size)) {
             allocateAt(i, size);
-            return &memory[i];
+            return true;
         }
     }
-    return nullptr;
+    return false;
 }
 
 void FlatMemoryAllocator::deallocate(void* ptr) {
@@ -44,7 +45,12 @@ std::string FlatMemoryAllocator::visualizeMemory() {
     return std::string(memory.begin(), memory.end());
 }
 
+size_t FlatMemoryAllocator::getMaxSize() {
+    return maxSize;
+}
+
 void FlatMemoryAllocator::initializeMemory(size_t maxSize) {
+    this->maxSize = maxSize;
     memory.resize(maxSize, '.');
     std::fill(memory.begin(), memory.end(), '.');
     for (size_t i = 0; i < maxSize; i++) {
@@ -58,6 +64,7 @@ bool FlatMemoryAllocator::canAllocateAt(size_t index, size_t size) const {
 
 void FlatMemoryAllocator::allocateAt(size_t index, size_t size) {
     for (size_t i = index; i < index + size; i++) {
+        printf("allocateAt Current Index: %lu out of %lu\n", i, index + size);
         allocationMap[i] = true;
         memory[i] = '#';
     }
