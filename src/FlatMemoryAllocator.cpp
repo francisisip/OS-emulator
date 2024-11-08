@@ -18,8 +18,7 @@ FlatMemoryAllocator* FlatMemoryAllocator::getInstance() {
 
 void FlatMemoryAllocator::initialize() {
     instance = new FlatMemoryAllocator();
-    //maxSize = Config::getMaxSize();
-    size_t maxSize = 16384;
+    size_t maxSize = Config::getInstance()->getMaxMemory();
     instance->initializeMemory(maxSize);
 }
 
@@ -64,7 +63,7 @@ bool FlatMemoryAllocator::canAllocateAt(size_t index, size_t size) const {
 
 void FlatMemoryAllocator::allocateAt(size_t index, size_t size) {
     for (size_t i = index; i < index + size; i++) {
-        printf("allocateAt Current Index: %lu out of %lu\n", i, index + size);
+        // printf("allocateAt Current Index: %lu out of %lu\n", i, index + size);
         allocationMap[i] = true;
         memory[i] = '#';
     }

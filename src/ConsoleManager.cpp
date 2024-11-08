@@ -45,7 +45,9 @@ std::string ConsoleManager::createProcessScreen(const std::string& baseName) {
         } while (consoles.find(newName) != consoles.end());
     }
     
-    Process newProcess(newName, pid_counter, 4096);
+    // TODO: add a range for the process memory allocation
+    size_t memProcess = Config::getInstance()->getMemoryPerProcess();
+    Process newProcess(newName, pid_counter, memProcess);
     auto sharedProcessAddress = scheduler->addProcess(newProcess);
     consoles[newName] = std::make_shared<ProcessScreen>(sharedProcessAddress);
     consoleNameTracker[newName] = 1;
