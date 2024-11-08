@@ -57,10 +57,35 @@ bool FlatMemoryAllocator::allocate(Process processToAllocate) {
     return false;
 }
 
-void FlatMemoryAllocator::deallocate(void* ptr) {
-    size_t index = static_cast<char*>(ptr) - &memory[0];
-    if (allocationMap[index]) {
-        deallocateAt(index);
+void FlatMemoryAllocator::deallocate(Process processToDeallocate) {
+    auto it = allocationMap.find(processToDeallocate.getPId());
+    if (it == allocationMap.end()) return;
+
+    for (auto& block : memory){
+        if(block.start == it->second){
+            block.isFree = true;
+            allocationMap.erase(it);
+            mergeFreeBlocks();
+            break;
+        }
+    }
+}
+
+void FlatMemoryAllocator::mergeFreeBlocks() {
+    for (auto it = memory.begin(); it != memory.end(); it++){
+        if(it->isFree){
+            auto next = it + 1;
+            if(next != memory.end() && next->isFree){
+                it->end = next->end;
+                memory.erase(next);
+            }
+
+            auto prev = it - 1;
+            if(prev != memory.begin() && prev->isFree){
+                prev->end = it->end;
+                memory.erase(it);
+            }
+        }
     }
 }
 
@@ -77,17 +102,17 @@ bool FlatMemoryAllocator::canAllocateAt(size_t index, size_t size) const {
     return (index + size <= maxSize);
 }
 
-void FlatMemoryAllocator::allocateAt(size_t index, size_t size) {
-    for (size_t i = index; i < index + size; i++) {
-        // printf("allocateAt Current Index: %lu out of %lu\n", i, index + size);
-        allocationMap[i] = true;
-        memory[i] = '#';
-    }
-    allocatedSize += size;
-}
+// void FlatMemoryAllocator::allocateAt(size_t index, size_t size) {
+//     for (size_t i = index; i < index + size; i++) {
+//         // printf("allocateAt Current Index: %lu out of %lu\n", i, index + size);
+//         allocationMap[i] = true;
+//         memory[i] = '#';
+//     }
+//     allocatedSize += size;
+// }
 
-void FlatMemoryAllocator::deallocateAt(size_t index) {
-    allocationMap[index] = false;
-    memory[index] = '.';
-    allocatedSize -= 1;
-}
+// void FlatMemoryAllocator::deallocateAt(size_t index) {
+//     allocationMap[index] = false;
+//     memory[index] = '.';
+//     allocatedSize -= 1;
+// }

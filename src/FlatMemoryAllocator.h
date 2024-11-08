@@ -21,8 +21,8 @@ public:
     static FlatMemoryAllocator* getInstance();
 
     static void initialize();
-    bool allocate(Process processToAllocate);
-    void deallocate(void* ptr) override;
+    bool allocate(Process processToAllocate) override;
+    void deallocate(Process processToDeallocate) override;
     std::string visualizeMemory() override;
     size_t getMaxSize();
 private:
@@ -35,6 +35,7 @@ private:
     
     void initializeMemory(size_t maxSize);
     bool canAllocateAt(size_t index, size_t size) const;
-    void allocateAt(size_t index, size_t size);
-    void deallocateAt(size_t index);
+    // void allocateAt(size_t index, size_t size);
+    // void deallocateAt(size_t index);
+    void mergeFreeBlocks();
 };
