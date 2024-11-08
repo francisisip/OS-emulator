@@ -4,6 +4,7 @@
 #include <queue>
 #include "Process.h"
 #include "CPUCoreWorker.h"
+#include "ResourceManager.h"
 
 class Scheduler {
 public:

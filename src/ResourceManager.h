@@ -1,3 +1,5 @@
+#pragma once
+
 #include "Scheduler.h"
 #include "Process.h"
 #include "ConsoleManager.h"

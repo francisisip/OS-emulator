@@ -46,7 +46,7 @@ void Scheduler::requeueProcess(std::shared_ptr<Process> process) {
     readyQueue.push(process);
 }
 
-// TODO: Implement a first-fit memory checker.
+// TODO: Implement a first-fit memory checker. and refactor to "allocateMemory"
 bool Scheduler::canAllocateMemory(size_t memoryRequired) {
     allocator = FlatMemoryAllocator::getInstance();
 
@@ -55,10 +55,10 @@ bool Scheduler::canAllocateMemory(size_t memoryRequired) {
         return false;
     } else {
         if (allocator->allocate(memoryRequired)) {
-            std::cout << "AWESOME!!!\n";
+            // std::cout << "AWESOME!!!\n";
             return true;
         }
-        std::cout << "not so awesome...\n";
+        // std::cout << "not so awesome...\n";
     }
 
     return false;
@@ -178,9 +178,15 @@ void Scheduler::schedFCFS() {
             // TODO: call the memory checker here
 
             if (coreId != -1) {
+                // check if a process is already allocated memory
                 readyQueue.pop();
-                curProcess->setCore(coreId);
-                coreList[coreId]->setCurrentProcess(curProcess);
+            
+                // if it can allocate memory, but need to check if process is already allocated
+                if(canAllocateMemory(curProcess->getMemoryRequired())){
+                    curProcess->setCore(coreId);
+                    coreList[coreId]->setCurrentProcess(curProcess);
+                }
+                else readyQueue.push(curProcess);
             }
         }
     }
@@ -199,11 +205,16 @@ void Scheduler::schedRR() {
             auto coreId = getAvailableCore();
 
             // TODO: call the memory checker here
-
             if (coreId != -1) {
+                // check if a process is already allocated memory
                 readyQueue.pop();
-                curProcess->setCore(coreId);
-                coreList[coreId]->setCurrentProcess(curProcess);
+            
+                // if it can allocate memory, but need to check if process is already allocated
+                if(canAllocateMemory(curProcess->getMemoryRequired())){
+                    curProcess->setCore(coreId);
+                    coreList[coreId]->setCurrentProcess(curProcess);
+                }
+                else readyQueue.push(curProcess);
             }
         }
     }
