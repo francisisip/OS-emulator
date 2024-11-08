@@ -5,6 +5,13 @@
 #include <unordered_map>
 #include "IMemoryAllocator.h"
 #include "Config.h"
+#include "Process.h"
+
+struct MemoryBlock {
+	size_t start;
+	size_t end;
+	bool isFree;
+};
 
 class FlatMemoryAllocator : public IMemoryAllocator {
 public:
@@ -14,7 +21,7 @@ public:
     static FlatMemoryAllocator* getInstance();
 
     static void initialize();
-    void* allocate(size_t size) override;
+    bool allocate(Process processToAllocate);
     void deallocate(void* ptr) override;
     std::string visualizeMemory() override;
     size_t getMaxSize();
@@ -22,10 +29,10 @@ private:
     static FlatMemoryAllocator* instance;
     size_t maxSize;
     size_t allocatedSize;
-    std::vector<char> memory;
-    std::unordered_map<size_t, bool> allocationMap;
+    std::vector<MemoryBlock> memory;
+    std::unordered_map<int, size_t> allocationMap;
     
-
+    
     void initializeMemory(size_t maxSize);
     bool canAllocateAt(size_t index, size_t size) const;
     void allocateAt(size_t index, size_t size);

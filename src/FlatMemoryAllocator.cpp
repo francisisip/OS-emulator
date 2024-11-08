@@ -22,16 +22,39 @@ void FlatMemoryAllocator::initialize() {
     instance->initializeMemory(maxSize);
 }
 
+void FlatMemoryAllocator::initializeMemory(size_t maxSize) {
+    this->maxSize = maxSize;
+    memory.push_back({0, maxSize, true});
+}
+
 // Implements first-fit approach by default for now.
-void* FlatMemoryAllocator::allocate(size_t size) {
+bool FlatMemoryAllocator::allocate(Process processToAllocate) {
     // check first if memory is allocated already for the process
-    for (size_t i = 0; i <= maxSize - size; i++) {
-        if (!allocationMap[i] && canAllocateAt(i, size)) {
-            allocateAt(i, size);
-            return &memory[i];
+    // loop thru the memory vector, and find the first fitting block
+    for (auto& block : memory){
+        if(!block.isFree) continue;
+        
+        size_t blockSize = block.end - block.start + 1;
+        if(!blockSize >= processToAllocate.getMemoryRequired()) continue;
+
+        // we have one whole block, we split it to make the block fit exactly the current process
+        MemoryBlock fittingBlock = {block.start, block.start + processToAllocate.getMemoryRequired(), false};
+        size_t fittingBlockSize = fittingBlock.end - fittingBlock.start + 1;
+
+        block.isFree = false;
+        block.end = block.start + processToAllocate.getMemoryRequired();
+        
+        // make a new memory block if the fittingblock.end == block.end
+        if(fittingBlockSize < blockSize){
+            MemoryBlock fragmentedBlock = {fittingBlock.end + 1, block.end, true};
+            memory.push_back(fragmentedBlock);
         }
+
+        block = fittingBlock;
+        allocationMap[processToAllocate.getPId()] = block.start;
+        return true;
     }
-    return nullptr;
+    return false;
 }
 
 void FlatMemoryAllocator::deallocate(void* ptr) {
@@ -49,14 +72,6 @@ size_t FlatMemoryAllocator::getMaxSize() {
     return maxSize;
 }
 
-void FlatMemoryAllocator::initializeMemory(size_t maxSize) {
-    this->maxSize = maxSize;
-    memory.resize(maxSize, '.');
-    std::fill(memory.begin(), memory.end(), '.');
-    for (size_t i = 0; i < maxSize; i++) {
-        allocationMap[i] = false;
-    }
-}
 
 bool FlatMemoryAllocator::canAllocateAt(size_t index, size_t size) const {
     return (index + size <= maxSize);
