@@ -117,7 +117,7 @@ void MenuScreen::handleInput(std::string command) {
 			if (instruction == "screen" && option == "-ls") {
 				commandHistory.back() += schedulerInstance->getSchedulerStatus();
 				std::cout << "\n" << schedulerInstance->getSchedulerStatus() << "\n\n";
-				std::cout << FlatMemoryAllocator::getInstance()->visualizeMemory();
+				FlatMemoryAllocator::getInstance()->visualizeMemory();
 			}
 			else {
 				commandHistory.back() += "\nCommand not recognized.";

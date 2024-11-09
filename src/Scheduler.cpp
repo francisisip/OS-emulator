@@ -47,21 +47,16 @@ void Scheduler::requeueProcess(std::shared_ptr<Process> process) {
 }
 
 // TODO: Implement a first-fit memory checker. and refactor to "allocateMemory"
-bool Scheduler::canAllocateMemory(size_t memoryRequired) {
+bool Scheduler::allocateMemoryForProcess(std::shared_ptr<Process> processToAllocate) {
     allocator = FlatMemoryAllocator::getInstance();
 
     if (!allocator) {
         std::cerr << "Error: Allocator not initialized.\n";
         return false;
-    } else {
-        if (allocator->allocate(memoryRequired) != nullptr) {
-            // std::cout << "AWESOME!!!\n";
-            return true;
-        }
-        // std::cout << "not so awesome...\n";
-    }
+    } 
+    else return allocator->allocate(processToAllocate);
 
-    return false;
+
 }
 
 const std::vector<std::unique_ptr<CPUCoreWorker>>& Scheduler::getCoreList() const {
@@ -182,7 +177,7 @@ void Scheduler::schedFCFS() {
                 readyQueue.pop();
             
                 // if it can allocate memory, but need to check if process is already allocated
-                if(canAllocateMemory(curProcess->getMemoryRequired())){
+                if(allocateMemoryForProcess(curProcess)){
                     curProcess->setCore(coreId);
                     coreList[coreId]->setCurrentProcess(curProcess);
                 }
@@ -210,7 +205,7 @@ void Scheduler::schedRR() {
                 readyQueue.pop();
             
                 // if it can allocate memory, but need to check if process is already allocated
-                if(canAllocateMemory(curProcess->getMemoryRequired())){
+                if(allocateMemoryForProcess(curProcess)){
                     curProcess->setCore(coreId);
                     coreList[coreId]->setCurrentProcess(curProcess);
                 }
