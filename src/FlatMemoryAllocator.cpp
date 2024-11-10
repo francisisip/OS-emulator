@@ -24,7 +24,7 @@ void FlatMemoryAllocator::initialize() {
 
 void FlatMemoryAllocator::initializeMemory(size_t maxSize) {
     this->maxSize = maxSize;
-    memory.push_back({0, static_cast<int>(maxSize), true});
+    memory.push_back({0, static_cast<int>(maxSize) - 1, true});
 }
 
 // Implements first-fit approach by default for now.
@@ -36,31 +36,20 @@ bool FlatMemoryAllocator::allocate(std::shared_ptr<Process> processToAllocate) {
 
     for (auto& block : memory){
         if(!block.isFree) continue;        
-        int blockSize = block.end - block.start + 1;
+        int origBlockSize = block.end - block.start + 1;
+        int originalEnd = block.end;
         int processMemoryRequired = static_cast<int>(processToAllocate->getMemoryRequired());
-        if(blockSize < processMemoryRequired) continue;
+        if(origBlockSize < processMemoryRequired) continue;
 
-        // we have one whole block, we split it to make the block fit exactly the current process
-        MemoryBlock fittingBlock = {block.start, block.start + processMemoryRequired, false};
-        size_t fittingBlockSize = fittingBlock.end - fittingBlock.start + 1;
-        
-        // make a new memory block if the fittingblock.end == block.end
-        if(fittingBlockSize < blockSize){
-            MemoryBlock fragmentedBlock = {fittingBlock.end + 1, block.end, true};
-            memory.push_back(fragmentedBlock);
-        }
+        block.isFree = false;
+        block.end = block.start + processMemoryRequired - 1;
 
-        std::cout << "\n------------------------\n";
-        std::cout << "Before updating block: " << std::endl;
-        std::cout << "Block at address: " << block.start << " Ends at address: " << block.end << " Is it free? " << block.isFree << std::endl;
-        std::cout << "FittingBlock at address: " << fittingBlock.start << " Ends at address: " << fittingBlock.end << " Is it free? " << fittingBlock.isFree << std::endl;
-
-        block = fittingBlock;
-
-        std::cout << "After updating block: " << std::endl;
-        std::cout << "Block at address: " << block.start << " Ends at address: " << block.end << " Is it free? " << block.isFree << std::endl;
-        std::cout << "------------------------\n";
         allocationMap[processToAllocate->getPId()] = block.start;
+
+
+        if (origBlockSize > block.end - block.start + 1)
+            memory.push_back({ block.start + processMemoryRequired, originalEnd, true });
+
         return true;
     }
     return false;
@@ -81,22 +70,25 @@ void FlatMemoryAllocator::deallocate(std::shared_ptr<Process> processToDeallocat
 }
 
 void FlatMemoryAllocator::mergeFreeBlocks() {
-    for (auto it = memory.begin(); it != memory.end(); it++){
-        if(it->isFree){
-            auto next = it + 1;
-            if(next != memory.end() && next->isFree){
-                it->end = next->end;
-                memory.erase(next);
-            }
 
-            auto prev = it - 1;
-            if(prev != memory.begin() && prev->isFree){
-                prev->end = it->end;
-                memory.erase(it);
+    std::sort(memory.begin(), memory.end(), [](const MemoryBlock& a, const MemoryBlock& b) {
+        return a.start < b.start;
+        });
+
+    auto it = memory.begin();
+    while (it != memory.end()) {
+        if (it->isFree) {
+            // Check the next block for merging
+            auto next = it + 1;
+            while (next != memory.end() && next->isFree) {
+                it->end = next->end;  // Extend the current block to the end of the next free block
+                next = memory.erase(next);  // Erase the next block
             }
         }
+        ++it;  // Move to the next block if no further merges are possible
     }
 }
+
 
 void FlatMemoryAllocator::visualizeMemory() {
     std::cout << "Visualizing Memory...\n\n";
@@ -118,18 +110,3 @@ size_t FlatMemoryAllocator::getMaxSize() {
 bool FlatMemoryAllocator::canAllocateAt(int index, size_t size) const {
     return (index + size <= maxSize);
 }
-
-// void FlatMemoryAllocator::allocateAt(size_t index, size_t size) {
-//     for (size_t i = index; i < index + size; i++) {
-//         // printf("allocateAt Current Index: %lu out of %lu\n", i, index + size);
-//         allocationMap[i] = true;
-//         memory[i] = '#';
-//     }
-//     allocatedSize += size;
-// }
-
-// void FlatMemoryAllocator::deallocateAt(size_t index) {
-//     allocationMap[index] = false;
-//     memory[index] = '.';
-//     allocatedSize -= 1;
-// }
