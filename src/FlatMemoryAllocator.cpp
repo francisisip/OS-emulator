@@ -1,4 +1,5 @@
 #include <iostream>
+#include <thread>
 #include "FlatMemoryAllocator.h"
 
 FlatMemoryAllocator* FlatMemoryAllocator::instance = nullptr;
@@ -109,4 +110,76 @@ size_t FlatMemoryAllocator::getMaxSize() {
 
 bool FlatMemoryAllocator::canAllocateAt(int index, size_t size) const {
     return (index + size <= maxSize);
+}
+
+std::string getPrintTime() {
+    std::time_t currentTime = std::time(nullptr);
+    std::tm* localTime = std::localtime(&currentTime);
+    std::stringstream ss;
+    ss << std::put_time(localTime, "(%m/%d/%Y) %I:%M:%S");
+    ss << (localTime->tm_hour >= 12 ? "PM" : "AM");
+
+    return ss.str();
+}
+
+void FlatMemoryAllocator::printMemoryQuantumInfoToFile() {
+    int quantumCycle = Config::getInstance()->getQuantumCycles();
+    int delaysPerExec = Config::getInstance()->getDelaysPerExec();
+    int count = 0;
+
+    std::string folder = "memory_stamps/";
+
+    if (!std::filesystem::exists(folder)) {
+        std::filesystem::create_directory(folder);
+    }
+
+    while (true) {
+        if(count % quantumCycle == 0) {
+            std::string filename = folder + "memory_qq_" + std::to_string(count) + ".txt"; 
+
+            std::ofstream outFile(filename);
+
+            if(outFile.is_open()) {
+                outFile << "Timestamp: " << getPrintTime() << std::endl;
+                outFile << "Number of Processses in Memory: " << allocationMap.size() << std::endl;
+                outFile << "Total External Fragmentation in KB: " << std::endl << std::endl;
+
+                outFile << "----end---- = " << maxSize << std::endl << std::endl;
+
+                std::lock_guard<std::mutex> lock(printMemInfoMutex); // lock for printing info
+
+                std::sort(memory.begin(), memory.end(), [](const MemoryBlock& a, const MemoryBlock& b) {
+                    return a.start < b.start;
+                });
+
+                mergeFreeBlocks();
+
+                int size = memory.size();
+
+                for(int i = size-1; i >= 0; i--) {
+                  
+                    if (!memory[i].isFree) {
+                        outFile << memory[i].end << std::endl;
+
+                        for (const auto& it : allocationMap) {
+                            if (it.second == memory[i].start)
+                                outFile << "P" << it.first <<std::endl;
+                        }
+
+                        outFile << memory[i].start << std::endl << std::endl;
+
+                    }
+                }
+
+                outFile << "----start---- = 0";
+
+                outFile.close();
+            } else {
+                std::cerr << "Error creating file: " << filename << "\n";
+            }
+        }
+        count++;
+        std::this_thread::sleep_for(std::chrono::milliseconds(100 * delaysPerExec + 1));
+    }
+
 }

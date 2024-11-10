@@ -3,7 +3,10 @@
 #include <vector>
 #include <string>
 #include <memory>
+#include <mutex>
 #include <unordered_map>
+#include <sstream>
+#include <filesystem> 
 #include "IMemoryAllocator.h"
 #include "Config.h"
 #include "Process.h"
@@ -25,6 +28,7 @@ public:
     bool allocate(std::shared_ptr<Process> processToAllocate) override;
     void deallocate(std::shared_ptr<Process> processToDeallocate) override;
     void visualizeMemory() override;
+    void printMemoryQuantumInfoToFile();
     size_t getMaxSize();
 private:
     static FlatMemoryAllocator* instance;
@@ -32,11 +36,10 @@ private:
     size_t allocatedSize;
     std::vector<MemoryBlock> memory;
     std::unordered_map<int, size_t> allocationMap;
+    std::mutex printMemInfoMutex;
     
     
     void initializeMemory(size_t maxSize);
     bool canAllocateAt(int index, size_t size) const;
-    // void allocateAt(size_t index, size_t size);
-    // void deallocateAt(size_t index);
     void mergeFreeBlocks();
 };
