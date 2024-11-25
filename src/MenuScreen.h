@@ -2,6 +2,8 @@
 # include "AConsole.h"
 #include <fstream>
 #include <filesystem>
+#include <thread>
+#include <functional>
 
 class MenuScreen : public AConsole {
 public:

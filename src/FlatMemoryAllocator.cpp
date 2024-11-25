@@ -126,7 +126,6 @@ void FlatMemoryAllocator::printMemoryQuantumInfoToFile() {
     int quantumCycle = Config::getInstance()->getQuantumCycles();
     int delaysPerExec = Config::getInstance()->getDelaysPerExec();
     int count = 0;
-
     std::string folder = "memory_stamps/";
 
     if (!std::filesystem::exists(folder)) {
@@ -135,16 +134,16 @@ void FlatMemoryAllocator::printMemoryQuantumInfoToFile() {
 
     while (true) {
         if(count % quantumCycle == 0) {
-            std::string filename = folder + "memory_qq_" + std::to_string(count) + ".txt"; 
+            
+            std::string filename = folder + "memory_qq_" + std::to_string(count / quantumCycle) + ".txt"; 
 
             std::ofstream outFile(filename);
 
             if(outFile.is_open()) {
                 outFile << "Timestamp: " << getPrintTime() << std::endl;
                 outFile << "Number of Processses in Memory: " << allocationMap.size() << std::endl;
-                outFile << "Total External Fragmentation in KB: " << std::endl << std::endl;
 
-                outFile << "----end---- = " << maxSize << std::endl << std::endl;
+                
 
                 std::lock_guard<std::mutex> lock(printMemInfoMutex); // lock for printing info
 
@@ -153,6 +152,22 @@ void FlatMemoryAllocator::printMemoryQuantumInfoToFile() {
                 });
 
                 mergeFreeBlocks();
+
+                int countFreeBlocks = 0;
+                int fragmentedMemory = 0;
+                for (auto& block : memory){
+                    if(!block.isFree) continue;
+                    countFreeBlocks++;
+                    fragmentedMemory = block.end - block.start + 1;
+                }
+                outFile << "Total External Fragmentation in KB: ";
+                if(countFreeBlocks > 1) outFile << fragmentedMemory;
+                else outFile << 0;
+
+                outFile << std::endl << std::endl;
+                outFile << "----end---- = " << maxSize - 1 << std::endl << std::endl;
+
+                
 
                 int size = memory.size();
 
