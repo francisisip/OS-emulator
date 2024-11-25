@@ -193,10 +193,6 @@ void MenuScreen::handleInput(std::string command) {
 				std::cout << "Initialized OS, all systems running.\n" << std::endl;
 				// ResourceManager initialize = Scheduler, which will set its cpu cores, scheduling type
 				resourceInstance->initializeScheduler();
-				std::thread test = std::thread(
-				std::bind(&FlatMemoryAllocator::printMemoryQuantumInfoToFile, 
-						FlatMemoryAllocator::getInstance()));
-				test.detach();
 			}
 			else if (command == "exit") {
 				exit(0);

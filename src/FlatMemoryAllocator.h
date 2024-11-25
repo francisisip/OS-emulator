@@ -28,7 +28,6 @@ public:
     bool allocate(std::shared_ptr<Process> processToAllocate) override;
     void deallocate(std::shared_ptr<Process> processToDeallocate) override;
     void visualizeMemory() override;
-    void printMemoryQuantumInfoToFile();
     size_t getMaxSize();
 private:
     static FlatMemoryAllocator* instance;
