@@ -1,5 +1,6 @@
 #include "PrintCommand.h"
-
+#include "Scheduler.h"
+#include "Process.h"
 PrintCommand::PrintCommand(int pid, std::string& toPrint) : ICommand(pid, PRINT)
 {
     this->toPrint = toPrint;

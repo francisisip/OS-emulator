@@ -4,6 +4,7 @@
 #include <queue>
 #include "Process.h"
 #include "CPUCoreWorker.h"
+#include "ResourceManager.h"
 
 class Scheduler {
 public:
@@ -16,7 +17,7 @@ public:
 
     std::shared_ptr<Process> addProcess(const Process& process);
     void requeueProcess(std::shared_ptr<Process> process); 
-    bool canAllocateMemory(size_t memoryRequired);
+    bool allocateMemoryForProcess(std::shared_ptr<Process> processToAllocate);
 
     const std::vector<std::unique_ptr<CPUCoreWorker>>& getCoreList() const;
     const std::vector<std::shared_ptr<Process>>& getProcessList() const;

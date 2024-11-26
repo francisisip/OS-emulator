@@ -2,9 +2,20 @@
 
 #include <vector>
 #include <string>
+#include <memory>
+#include <mutex>
 #include <unordered_map>
+#include <sstream>
+#include <filesystem> 
 #include "IMemoryAllocator.h"
 #include "Config.h"
+#include "Process.h"
+
+struct MemoryBlock {
+	int start;
+	int end;
+	bool isFree;
+};
 
 class FlatMemoryAllocator : public IMemoryAllocator {
 public:
@@ -14,20 +25,20 @@ public:
     static FlatMemoryAllocator* getInstance();
 
     static void initialize();
-    bool allocate(size_t size) override;
-    void deallocate(void* ptr) override;
-    std::string visualizeMemory() override;
+    bool allocate(std::shared_ptr<Process> processToAllocate) override;
+    void deallocate(std::shared_ptr<Process> processToDeallocate) override;
+    void visualizeMemory() override;
     size_t getMaxSize();
 private:
     static FlatMemoryAllocator* instance;
     size_t maxSize;
     size_t allocatedSize;
-    std::vector<char> memory;
-    std::unordered_map<size_t, bool> allocationMap;
+    std::vector<MemoryBlock> memory;
+    std::unordered_map<int, size_t> allocationMap;
+    std::mutex printMemInfoMutex;
     
-
+    
     void initializeMemory(size_t maxSize);
-    bool canAllocateAt(size_t index, size_t size) const;
-    void allocateAt(size_t index, size_t size);
-    void deallocateAt(size_t index);
+    bool canAllocateAt(int index, size_t size) const;
+    void mergeFreeBlocks();
 };

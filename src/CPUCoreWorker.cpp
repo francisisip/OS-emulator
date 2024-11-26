@@ -1,5 +1,6 @@
 #include "CPUCoreWorker.h"
 #include "Scheduler.h"
+#include "FlatMemoryAllocator.h"
 
 #include <utility>
 
@@ -47,6 +48,8 @@ void CPUCoreWorker::runProcess() {
     
     Scheduler* scheduler = Scheduler::getInstance();
     Config* currentConfig = Config::getInstance();
+    FlatMemoryAllocator* memoryInstance = FlatMemoryAllocator::getInstance();
+
     int processCycles;
     unsigned int delaysPerExec = currentConfig->getDelaysPerExec();
     std::string scheduleType = currentConfig->getScheduler();
@@ -85,7 +88,9 @@ void CPUCoreWorker::runProcess() {
             }
         }
         // If process finished during quantum, do not requeue
+
         if (currentProcess && currentProcess->isFinished()) {
+            memoryInstance->deallocate(currentProcess);
             currentProcess.reset();  // Process finished, reset the pointer
             assignedProcess = false;
         }

@@ -5,3 +5,4 @@ main
 /src/*.exe
 .DS_Store
 .vs
+memory_stamps
