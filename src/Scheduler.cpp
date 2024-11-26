@@ -170,7 +170,6 @@ void Scheduler::schedFCFS() {
             // Find a core that is available
             auto coreId = getAvailableCore();
 
-            // TODO: call the memory checker here
 
             if (coreId != -1) {
                 // check if a process is already allocated memory
@@ -199,7 +198,6 @@ void Scheduler::schedRR() {
             // Find available core
             auto coreId = getAvailableCore();
 
-            // TODO: call the memory checker here
             if (coreId != -1) {
                 // check if a process is already allocated memory
                 readyQueue.pop();

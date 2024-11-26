@@ -27,6 +27,8 @@ public:
     unsigned int getMaxMemory() const;
     unsigned int getMemoryPerFrame() const;
     unsigned int getMemoryPerProcess() const;
+    unsigned int getMinMemoryPerProcess() const;
+    unsigned int getMaxMemoryPerProcess() const;
     
 private:
     // Configuration parameters
@@ -40,7 +42,10 @@ private:
     unsigned int delaysPerExec;
     unsigned int maxMemory;
     unsigned int memoryPerFrame;
-    unsigned int memoryPerProcess;
+    //unsigned int memoryPerProcess;
+    unsigned int minMemoryPerProcess;
+    unsigned int maxMemoryPerProcess;
+    void validatePowerOfTwo(unsigned int memory);
     unsigned int validateRange(const std::string& paramName, unsigned int value, unsigned int min, unsigned int max);
     std::string validateScheduler(const std::string& scheduler);
     int validateNumCpu(int numCpu);

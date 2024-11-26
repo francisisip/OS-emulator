@@ -23,7 +23,6 @@ int main()
 	Config::initialize();
 	ResourceManager::initialize();
 
-	// TODO: Grab the memory allocator maxSize from the config
 	FlatMemoryAllocator::initialize();
 
 	std::thread CPUCycleThread(tickCPUCycle);
