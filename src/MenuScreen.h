@@ -18,6 +18,7 @@ public:
 
 private:
 	void displayASCII();
+	void displayVMStat();
 	void handleInput(std::string command);
 	bool isInitialized;
 };

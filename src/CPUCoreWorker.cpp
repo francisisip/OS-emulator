@@ -7,6 +7,9 @@
 CPUCoreWorker::CPUCoreWorker(int coreId){
     this->coreId = coreId;
     assignedProcess = false;
+    totalCPUTicks = 0;
+    activeCPUTicks = 0;
+    idleCPUTicks = 0;
 }
 
 CPUCoreWorker::~CPUCoreWorker() {
@@ -31,14 +34,18 @@ int CPUCoreWorker::getCoreId() {
 }
 
 void CPUCoreWorker::runCoreWorker(){
-    while(true){
-        if(assignedProcess && currentProcess){
+    while(true) {
+        // ITS RUNNING
+        if (assignedProcess && currentProcess)
             runProcess();
-            // ITS RUNNING
+        else {      
+            // ITS IDLE
+            idleCPUTicks++;
+            // Also update total cpu ticks;
+            std::lock_guard<std::mutex> lock(totalTicksMutex);
+            totalCPUTicks++;
+            
         }
-        // ITS IDLE
-        totalCPUTicks++;
-        // sleep based off CPU Cycle delay
     }
 }
 
@@ -59,6 +66,10 @@ void CPUCoreWorker::runProcess() {
         while(!currentProcess->isFinished()){
             currentProcess->executeCurrentCommand();
             std::this_thread::sleep_for(std::chrono::milliseconds(100 * (delaysPerExec + 1)));
+            
+            // Update both total and active CPU Ticks
+            std::lock_guard<std::mutex> lock(totalTicksMutex);
+            activeCPUTicks++;
             totalCPUTicks++;
         }
 
@@ -74,10 +85,14 @@ void CPUCoreWorker::runProcess() {
             if (processCycles < quantumCycles) {
                 currentProcess->executeCurrentCommand();
                 currentProcess->incrementCycleCount();
+                std::lock_guard<std::mutex> lock(totalTicksMutex);
+                activeCPUTicks++;
                 totalCPUTicks++;
                 std::this_thread::sleep_for(std::chrono::milliseconds(100 * (delaysPerExec + 1)));
             } else {
                 currentProcess->resetCycleCount();
+                std::lock_guard<std::mutex> lock(totalTicksMutex);
+                activeCPUTicks++;
                 totalCPUTicks++;
                 std::this_thread::sleep_for(std::chrono::milliseconds(100 * (delaysPerExec + 1))); 
 
@@ -106,6 +121,20 @@ void CPUCoreWorker::setCurrentProcess(std::shared_ptr<Process> process){
 bool CPUCoreWorker::hasCurrentProcess(){
     std::lock_guard<std::mutex> lock(coreMutex);
     return assignedProcess;
+}
+
+int CPUCoreWorker::getTotalCPUTicks() {
+    std::lock_guard<std::mutex> lock(totalTicksMutex);
+    // return 5; Use this and it will return the proper number of CPU Ticks when you do vm-stat
+    return totalCPUTicks;
+}
+
+int CPUCoreWorker::getActiveCPUTicks() {
+    return activeCPUTicks;
+}
+
+int CPUCoreWorker::getIdleCPUTicks() {
+    return idleCPUTicks;
 }
 
 void CPUCoreWorker::stop() {

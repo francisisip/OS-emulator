@@ -1,5 +1,4 @@
 #include "ResourceManager.h"
-
 Config* currentConfig = nullptr;
 ResourceManager* ResourceManager::instance = nullptr;
 ConsoleManager* consoleManager = nullptr;
@@ -70,4 +69,41 @@ bool ResourceManager::schedulerTestStop(){
         return true;
     }
     return running;
+}
+
+long long ResourceManager::getTotalCPUTicks() {
+    Scheduler* scheduler = Scheduler::getInstance();
+    const std::vector<std::unique_ptr<CPUCoreWorker>>& coreList = scheduler->getCoreList();
+    long long totalCPUTicks = 0;
+
+    for (const auto& core: coreList) {
+        std::cout << "TOTAL CPU TICK TO BE ADDED:" << core->getTotalCPUTicks() << std::endl;
+        totalCPUTicks += core->getTotalCPUTicks();
+    }
+
+    return totalCPUTicks;
+}
+
+long long ResourceManager::getActiveCPUTicks() {
+    Scheduler* scheduler = Scheduler::getInstance();
+    const std::vector<std::unique_ptr<CPUCoreWorker>>& coreList = scheduler->getCoreList();
+    long long activeCPUTicks = 0;
+
+    for (const auto& core: coreList) {
+        activeCPUTicks += core->getActiveCPUTicks();
+    }
+
+    return activeCPUTicks;
+}
+
+long long ResourceManager::getIdleCPUTicks() {
+    Scheduler* scheduler = Scheduler::getInstance();
+    const std::vector<std::unique_ptr<CPUCoreWorker>>& coreList = scheduler->getCoreList();
+    long long idleCPUTicks = 0;
+
+    for (const auto& core: coreList) {
+        idleCPUTicks += core->getIdleCPUTicks();
+    }
+
+    return idleCPUTicks;
 }

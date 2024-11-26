@@ -8,10 +8,12 @@
 #include "Scheduler.h"
 #include "ResourceManager.h"
 #include "FlatMemoryAllocator.h"
+#include "Config.h"
 
 ConsoleManager* instance;
 Scheduler* schedulerInstance;
 ResourceManager* resourceInstance;
+Config* configInstance;
 
 MenuScreen::MenuScreen(): AConsole("MAIN_MENU") {
 	this->isInitialized = false;
@@ -34,6 +36,7 @@ void MenuScreen::onExecute() {
 	instance = ConsoleManager::getInstance();
 	schedulerInstance = Scheduler::getInstance();
 	resourceInstance = ResourceManager::getInstance();
+	configInstance = Config::getInstance();
 	display();
 	process();
 }
@@ -74,6 +77,23 @@ void MenuScreen::displayASCII() {
 
 	std::cout << "Hello, welcome to CSOPESY commandline!" << '\n';
 	std::cout << "Type 'exit' to quit, 'clear' to clear the screen\n" << '\n';
+}
+
+void MenuScreen::displayVMStat() {
+
+	resourceInstance = ResourceManager::getInstance();
+
+	// TODO: Align the prints somehow
+	std::cout << std::endl;
+	std::cout << configInstance->getMaxMemory() << " KB total memory" << std::endl;
+	std::cout << "used memory" << std::endl;
+	std::cout << "free memory" << std::endl;
+	std::cout << "idle cpu ticks" << std::endl; // idle = total - active
+	std::cout << "active cpu ticks" << std::endl;
+	std::cout << resourceInstance->getTotalCPUTicks() << " total cpu ticks" << std::endl;
+	std::cout << "pages paged in" << std::endl;
+	std::cout << "pages paged out" << std::endl;
+	std::cout << std::endl;
 }
 
 void MenuScreen::handleInput(std::string command) {
@@ -151,6 +171,8 @@ void MenuScreen::handleInput(std::string command) {
 					commandHistory.back() += "\nscheduler-test is not running, there is nothing to stop.";
 					std::cout << "scheduler-test is not running, there is nothing to stop.\n" << std::endl;
 				}
+			} else if (command == "vm-stat") {
+				displayVMStat();
 			}
 			else if (command == "report-util") {
 				std::ofstream outFile("csopesy-log.txt");
