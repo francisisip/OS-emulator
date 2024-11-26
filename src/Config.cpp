@@ -1,4 +1,5 @@
 #include "Config.h"
+#include <stdexcept>
 
 Config* Config::instance = nullptr;
 Config::Config() {
@@ -41,13 +42,23 @@ void Config::loadConfig(const std::string& filename) {
     minIns = validateRange("min-ins", std::stoul(configMap["min-ins"]), 1, UINT32_MAX);
     maxIns = validateRange("max-ins", std::stoul(configMap["max-ins"]), 1, UINT32_MAX);
     delaysPerExec = validateRange("delay-per-exec", std::stoul(configMap["delay-per-exec"]), 0, UINT32_MAX);
-    maxMemory = validateRange("max-overall-mem", std::stoul(configMap["max-overall-mem"]), 0, UINT32_MAX);
-    memoryPerFrame = validateRange("mem-per-frame", std::stoul(configMap["mem-per-frame"]), 0, UINT32_MAX);
-    memoryPerProcess = validateRange("mem-per-proc", std::stoul(configMap["mem-per-proc"]), 0, UINT32_MAX);
+    maxMemory = validateRange("max-overall-mem", std::stoul(configMap["max-overall-mem"]), 2, UINT32_MAX);
+    memoryPerFrame = validateRange("mem-per-frame", std::stoul(configMap["mem-per-frame"]), 2, UINT32_MAX);
+    minMemoryPerProcess = validateRange("min-mem-per-proc", std::stoul(configMap["min-mem-per-proc"]), 2, UINT32_MAX);
 
+    maxMemoryPerProcess = validateRange("max-mem-per-proc", std::stoul(configMap["max-mem-per-proc"]), 2, UINT32_MAX);
+    // Additional Logic to ensure memory is in power of 2
+    validatePowerOfTwo(maxMemory);
+    validatePowerOfTwo(memoryPerFrame);
+    validatePowerOfTwo(minMemoryPerProcess);
+    validatePowerOfTwo(maxMemoryPerProcess);
     // Additional logic to ensure `min-ins` <= `max-ins`
     if (minIns > maxIns) {
         throw std::runtime_error("min-ins cannot be greater than max-ins");
+    }
+    // Additional logic to ensure min-mem-per-proc <= max-mem-per-proc
+    if (minMemoryPerProcess > maxMemoryPerProcess) {
+        throw std::runtime_error("min-mem-per-proc cannot be greater than max-mem-per-proc");
     }
 }
 
@@ -57,6 +68,12 @@ int Config::validateNumCpu(int numCpu) {
         throw std::out_of_range("num-cpu must be in the range [1, 128]");
     }
     return numCpu;
+}
+void Config::validatePowerOfTwo(unsigned int memory){
+  // memory is power of two
+  if((memory & (memory - 1)) != 0){
+      throw std::runtime_error("memory value has to be power of 2 format");
+  }
 }
 
 // Helper to validate scheduler type
@@ -84,4 +101,6 @@ unsigned int Config::getMaxIns() const { return maxIns; }
 unsigned int Config::getDelaysPerExec() const { return delaysPerExec; }
 unsigned int Config::getMaxMemory() const { return maxMemory; }
 unsigned int Config::getMemoryPerFrame() const { return memoryPerFrame; }
-unsigned int Config::getMemoryPerProcess() const { return memoryPerProcess; }
+unsigned int Config::getMinMemoryPerProcess() const { return minMemoryPerProcess; }
+unsigned int Config::getMaxMemoryPerProcess() const { return maxMemoryPerProcess; }
+

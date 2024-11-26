@@ -11,6 +11,7 @@ Config* config = nullptr;
 Process::Process(std::string name, int pid){
 	this->pid = pid;
 	this->name = name;
+  this->memoryRequired = setMemoryRequired();
 	this->commandCount = setCommandCount();
 	this->commandCounter = 0;
 	this->cycleCount = 0;
@@ -90,6 +91,19 @@ void Process::resetCore() {
 	cpuCoreID = -1;
 }
 
+unsigned int Process::setMemoryRequired(){
+  Config* config = Config::getInstance();
+
+	int lower_boundary = config->getMinMemoryPerProcess();
+	int upper_boundary = config->getMaxMemoryPerProcess();
+
+	std::random_device rd;  // Seed for the generator
+	std::mt19937 gen(rd()); // Mersenne Twister generator
+	std::uniform_int_distribution<> dis(lower_boundary, upper_boundary);
+	int memoryRequired = dis(gen);
+
+  return memoryRequired;
+}
 unsigned int Process::setCommandCount() {
 	Config* config = Config::getInstance();
 

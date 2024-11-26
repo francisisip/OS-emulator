@@ -32,6 +32,7 @@ public:
 	bool isFinished() const;
 	void setCore(int coreID);
 	void resetCore();
+  unsigned int setMemoryRequired();
 	unsigned int setCommandCount();
 	void incrementCycleCount();
 	void resetCycleCount();
