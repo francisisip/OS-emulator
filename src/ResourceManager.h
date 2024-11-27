@@ -22,6 +22,8 @@ public:
     long long getTotalCPUTicks();
     long long getActiveCPUTicks();
     long long getIdleCPUTicks();
+    size_t getActiveMemory(); // gets memory currently being used
+    
 
 private:
    static ResourceManager* instance;

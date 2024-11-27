@@ -46,7 +46,6 @@ void CPUCoreWorker::runCoreWorker(){
             // ITS IDLE
             idleCPUTicks++;
             // Also update total cpu ticks;
-            std::lock_guard<std::mutex> lock(totalTicksMutex);
             totalCPUTicks++;
             std::this_thread::sleep_for(std::chrono::milliseconds(100 * (delaysPerExec + 1)));
         }
@@ -73,7 +72,6 @@ void CPUCoreWorker::runProcess() {
             std::this_thread::sleep_for(std::chrono::milliseconds(100 * (delaysPerExec + 1)));
             
             // Update both total and active CPU Ticks
-            std::lock_guard<std::mutex> lock(totalTicksMutex);
             activeCPUTicks++;
             totalCPUTicks++;
         }
@@ -90,13 +88,11 @@ void CPUCoreWorker::runProcess() {
             if (processCycles < quantumCycles) {
                 currentProcess->executeCurrentCommand();
                 currentProcess->incrementCycleCount();
-                std::lock_guard<std::mutex> lock(totalTicksMutex);
                 activeCPUTicks++;
                 totalCPUTicks++;
                 std::this_thread::sleep_for(std::chrono::milliseconds(100 * (delaysPerExec + 1)));
             } else {
                 currentProcess->resetCycleCount();
-                std::lock_guard<std::mutex> lock(totalTicksMutex);
                 activeCPUTicks++;
                 totalCPUTicks++;
                 std::this_thread::sleep_for(std::chrono::milliseconds(100 * (delaysPerExec + 1))); 
@@ -120,6 +116,10 @@ void CPUCoreWorker::runProcess() {
     }
 }
 
+std::shared_ptr<Process> CPUCoreWorker::getCurrentProcess() {
+    return currentProcess;
+}
+
 void CPUCoreWorker::setCurrentProcess(std::shared_ptr<Process> process){
     std::lock_guard<std::mutex> lock(coreMutex);
     currentProcess = process;
@@ -131,16 +131,15 @@ bool CPUCoreWorker::hasCurrentProcess(){
     return assignedProcess;
 }
 
-int CPUCoreWorker::getTotalCPUTicks() {
-    std::lock_guard<std::mutex> lock(totalTicksMutex);
+long long CPUCoreWorker::getTotalCPUTicks() {
     return totalCPUTicks;
 }
 
-int CPUCoreWorker::getActiveCPUTicks() {
+long long CPUCoreWorker::getActiveCPUTicks() {
     return activeCPUTicks;
 }
 
-int CPUCoreWorker::getIdleCPUTicks() {
+long long CPUCoreWorker::getIdleCPUTicks() {
     return idleCPUTicks;
 }
 

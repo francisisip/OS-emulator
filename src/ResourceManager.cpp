@@ -77,7 +77,7 @@ long long ResourceManager::getTotalCPUTicks() {
     long long totalCPUTicks = 0;
 
     for (const auto& core: coreList) {
-        std::cout << "TOTAL CPU TICK TO BE ADDED:" << core->getTotalCPUTicks() << std::endl;
+        // std::cout << "TOTAL CPU TICK TO BE ADDED:" << core->getTotalCPUTicks() << std::endl;
         totalCPUTicks += core->getTotalCPUTicks();
     }
 
@@ -106,4 +106,20 @@ long long ResourceManager::getIdleCPUTicks() {
     }
 
     return idleCPUTicks;
+}
+
+size_t ResourceManager::getActiveMemory() {
+    Scheduler* scheduler = Scheduler::getInstance();
+    const std::vector<std::unique_ptr<CPUCoreWorker>>& coreList = scheduler->getCoreList();
+    
+    size_t activeMemory = 0;
+
+    for (const auto& core: coreList) {
+        if (core->hasCurrentProcess()) {
+            auto process = core->getCurrentProcess();
+            activeMemory += process->getMemoryRequired();
+        }
+    }
+
+    return activeMemory;
 }
