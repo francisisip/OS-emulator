@@ -34,6 +34,9 @@ int CPUCoreWorker::getCoreId() {
 }
 
 void CPUCoreWorker::runCoreWorker(){
+    Config* currentConfig = Config::getInstance();
+    unsigned int delaysPerExec = currentConfig->getDelaysPerExec();
+
     while(true) {
         // ITS RUNNING
         if (assignedProcess && currentProcess)
@@ -44,7 +47,7 @@ void CPUCoreWorker::runCoreWorker(){
             // Also update total cpu ticks;
             std::lock_guard<std::mutex> lock(totalTicksMutex);
             totalCPUTicks++;
-            
+            std::this_thread::sleep_for(std::chrono::milliseconds(100 * (delaysPerExec + 1)));
         }
     }
 }
@@ -125,7 +128,6 @@ bool CPUCoreWorker::hasCurrentProcess(){
 
 int CPUCoreWorker::getTotalCPUTicks() {
     std::lock_guard<std::mutex> lock(totalTicksMutex);
-    // return 5; Use this and it will return the proper number of CPU Ticks when you do vm-stat
     return totalCPUTicks;
 }
 
