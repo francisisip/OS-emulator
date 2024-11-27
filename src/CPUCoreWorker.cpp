@@ -69,7 +69,6 @@ void CPUCoreWorker::runProcess() {
 
     } else if (scheduleType == "\"rr\"") {
         while(!currentProcess->isFinished()) {
-          std::cout << "run";
             // At every CPU cycle, check if the process reached the max no. of quantum cycles
             processCycles = currentProcess->getCycleCount();
             
@@ -94,11 +93,12 @@ void CPUCoreWorker::runProcess() {
 
         if (currentProcess && currentProcess->isFinished()) {
           // FIXME: check first which allocator to use
-            //memoryInstance->deallocate(currentProcess);
-          Paging::getInstance()->deallocate(currentProcess);
-            currentProcess.reset();  // Process finished, reset the pointer
-            assignedProcess = false;
-        }
+          if(Scheduler::getInstance()->getOverallMemoryEqualPerFrame()) memoryInstance->deallocate(currentProcess);
+          else Paging::getInstance()->deallocate(currentProcess);
+
+          currentProcess.reset();  // Process finished, reset the pointer
+          assignedProcess = false;
+      }
     }
 }
 

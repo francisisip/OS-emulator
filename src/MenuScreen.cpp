@@ -119,7 +119,7 @@ void MenuScreen::handleInput(std::string command) {
 				commandHistory.back() += schedulerInstance->getSchedulerStatus();
 				std::cout << "\n" << schedulerInstance->getSchedulerStatus() << "\n\n";
 				// FlatMemoryAllocator::getInstance()->visualizeMemory();
-        Paging::getInstance()->visualizeMemory();
+        // Paging::getInstance()->visualizeMemory();
 			}
 			else {
 				commandHistory.back() += "\nCommand not recognized.";

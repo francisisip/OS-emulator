@@ -219,3 +219,4 @@ void Scheduler::schedRR() {
     }
 }
 
+bool Scheduler::getOverallMemoryEqualPerFrame() { return isOverallMemoryEqualPerFrame; }
