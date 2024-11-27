@@ -1,5 +1,6 @@
 #pragma once
 #include "IMemoryAllocator.h"
+#include <memory>
 #include <unordered_map>
 #include "Process.h"
 #include "Config.h"
