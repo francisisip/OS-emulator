@@ -49,6 +49,9 @@ bool Paging::allocate(std::shared_ptr<Process> processToAllocate){
   // TODO: Implement backing store swapping here instead of 
   // returning false
   if (pagesNeeded > freeFrames.size()) return false; // not enough memory
+  
+  auto it = pageTables.find(pid);
+  if (it != pageTables.end()) return true; // process already in memory
 
   for (int i = 0; i < pagesNeeded; i++){
     int frame = findFreeFrame();
