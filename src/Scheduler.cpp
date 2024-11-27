@@ -1,9 +1,12 @@
 #include "Scheduler.h"
 #include "FlatMemoryAllocator.h"
+#include "Paging.h"
+#include "Config.h"
 #include <iomanip>
 
 Scheduler* Scheduler::instance = nullptr;
 FlatMemoryAllocator* allocator = nullptr;
+Paging* pagingAllocator = nullptr;
 
 Scheduler::Scheduler() {
 }
@@ -17,6 +20,11 @@ Scheduler* Scheduler::getInstance(){
 };
 
 void Scheduler::run() {
+    int maxOverallMemory = Config::getInstance()->getMaxMemory();
+    int memoryPerFrame = Config::getInstance()->getMemoryPerFrame();
+
+    isOverallMemoryEqualPerFrame = maxOverallMemory == memoryPerFrame;
+
     running = true;
     schedulerThread = std::thread(&Scheduler::startSchedulerLoop, this);
 }
@@ -46,15 +54,13 @@ void Scheduler::requeueProcess(std::shared_ptr<Process> process) {
     readyQueue.push(process);
 }
 
-// TODO: Implement a first-fit memory checker. and refactor to "allocateMemory"
 bool Scheduler::allocateMemoryForProcess(std::shared_ptr<Process> processToAllocate) {
+    // Check which allocator to use (based off specs)
+    
     allocator = FlatMemoryAllocator::getInstance();
-
-    if (!allocator) {
-        std::cerr << "Error: Allocator not initialized.\n";
-        return false;
-    } 
-    else return allocator->allocate(processToAllocate);
+    pagingAllocator = Paging::getInstance();
+    if(isOverallMemoryEqualPerFrame) return allocator->allocate(processToAllocate);
+    else return pagingAllocator->allocate(processToAllocate);
 
 
 }
@@ -213,3 +219,4 @@ void Scheduler::schedRR() {
     }
 }
 
+bool Scheduler::getOverallMemoryEqualPerFrame() { return isOverallMemoryEqualPerFrame; }

@@ -36,7 +36,8 @@ public:
 	unsigned int setCommandCount();
 	void incrementCycleCount();
 	void resetCycleCount();
-	
+  int getPagesNeeded();
+  unsigned int setPagesNeeded();
 	void executeCurrentCommand();
 	void moveToNextLine();
 	int setPID();
@@ -47,7 +48,7 @@ private:
 	std::string name;
 	typedef std::vector<std::shared_ptr<ICommand>> CommandList;
 	CommandList commandList;
-
+  	int pagesNeeded;
 	int cpuCoreID = -1;
 	ProcessState currentState;
 	std::chrono::system_clock::time_point timeCreated;

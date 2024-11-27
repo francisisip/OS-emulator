@@ -5,6 +5,7 @@
 
 #include "MenuScreen.h"
 #include "ConsoleManager.h"
+#include "Paging.h"
 #include "Scheduler.h"
 #include "ResourceManager.h"
 #include "FlatMemoryAllocator.h"
@@ -138,6 +139,7 @@ void MenuScreen::handleInput(std::string command) {
 				commandHistory.back() += schedulerInstance->getSchedulerStatus();
 				std::cout << "\n" << schedulerInstance->getSchedulerStatus() << "\n\n";
 				// FlatMemoryAllocator::getInstance()->visualizeMemory();
+        // Paging::getInstance()->visualizeMemory();
 			}
 			else {
 				commandHistory.back() += "\nCommand not recognized.";
