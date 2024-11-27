@@ -1,5 +1,8 @@
+#pragma once
 #include "IMemoryAllocator.h"
 #include <unordered_map>
+#include "Process.h"
+#include "Config.h"
 
 class Paging : public IMemoryAllocator {
 public:
@@ -20,7 +23,7 @@ private:
     int numFrames;
 
     // Physical memory represented as frames.
-    // -1 means 
+    // -1 means in a given index means no value
     std::vector<int> memory; 
     // Map of process ID to page table.
     std::unordered_map<int, std::unordered_map<int, int>> pageTables; // Map of process ID to page table.

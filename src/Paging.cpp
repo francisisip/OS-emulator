@@ -1,5 +1,4 @@
 #include "Paging.h"
-#include "Config.h"
 
 Paging* Paging::instance = nullptr;
 
@@ -47,6 +46,8 @@ bool Paging::allocate(std::shared_ptr<Process> processToAllocate){
   int pid = processToAllocate->getPId();
   int pagesNeeded = processToAllocate->getPagesNeeded();
 
+  // TODO: Implement backing store swapping here instead of 
+  // returning false
   if (pagesNeeded > freeFrames.size()) return false; // not enough memory
 
   for (int i = 0; i < pagesNeeded; i++){
@@ -84,8 +85,3 @@ void Paging::visualizeMemory() {
         }
     }
 }
-
-bool allocate(std::shared_ptr<Process> processToAllocate){
-  int pid = processToAllocate->getPId();
-
-} 
