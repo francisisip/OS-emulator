@@ -11,11 +11,11 @@ Config* config = nullptr;
 Process::Process(std::string name, int pid){
 	this->pid = pid;
 	this->name = name;
-  this->memoryRequired = setMemoryRequired();
+  	this->memoryRequired = setMemoryRequired();
 	this->commandCount = setCommandCount();
 	this->commandCounter = 0;
 	this->cycleCount = 0;
-  this->pagesNeeded = setPagesNeeded();
+  	this->pagesNeeded = setPagesNeeded();
 	timeCreated = std::chrono::system_clock::now();
 	currentState = ProcessState::READY;
 }
@@ -112,7 +112,7 @@ unsigned int Process::setMemoryRequired(){
 	std::uniform_int_distribution<> dis(lower_boundary, upper_boundary);
 	int memoryRequired = dis(gen);
 
-  return memoryRequired;
+  	return memoryRequired;
 }
 unsigned int Process::setCommandCount() {
 	Config* config = Config::getInstance();

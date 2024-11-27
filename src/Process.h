@@ -48,7 +48,7 @@ private:
 	std::string name;
 	typedef std::vector<std::shared_ptr<ICommand>> CommandList;
 	CommandList commandList;
-  int pagesNeeded;
+  	int pagesNeeded;
 	int cpuCoreID = -1;
 	ProcessState currentState;
 	std::chrono::system_clock::time_point timeCreated;

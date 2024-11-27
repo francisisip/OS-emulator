@@ -1,4 +1,5 @@
 #include "IMemoryAllocator.h"
+#include <unordered_map>
 
 class Paging : public IMemoryAllocator {
 public:
@@ -12,7 +13,6 @@ public:
     void visualizeMemory() override;
     int findFreeFrame();
     size_t getMaxPages();
-    size_t setMaxPages();
 private:
     static Paging* instance;
     size_t maxPages;
@@ -23,7 +23,7 @@ private:
     // -1 means 
     std::vector<int> memory; 
     // Map of process ID to page table.
-    std::unordered_map<int, std::unordered_map<int, int>> pageTables; 
+    std::unordered_map<int, std::unordered_map<int, int>> pageTables; // Map of process ID to page table.
     // List of free frames.
     std::vector<int> freeFrames; 
 };
