@@ -31,6 +31,7 @@ private:
     void startSchedulerLoop();
     void schedFCFS();
     void schedRR();
+    bool isOverallMemoryEqualPerFrame;
 
     bool running = false;
     static Scheduler* instance;
