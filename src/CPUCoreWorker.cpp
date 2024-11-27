@@ -1,4 +1,5 @@
 #include "CPUCoreWorker.h"
+#include "Paging.h"
 #include "Scheduler.h"
 #include "FlatMemoryAllocator.h"
 
@@ -49,13 +50,14 @@ void CPUCoreWorker::runProcess() {
     Scheduler* scheduler = Scheduler::getInstance();
     Config* currentConfig = Config::getInstance();
     FlatMemoryAllocator* memoryInstance = FlatMemoryAllocator::getInstance();
-
+    
     int processCycles;
     unsigned int delaysPerExec = currentConfig->getDelaysPerExec();
     std::string scheduleType = currentConfig->getScheduler();
     int quantumCycles = currentConfig->getQuantumCycles();
 
     if (scheduleType == "\"fcfs\"") {
+      //TODO: update FCFS to work with memory
         while(!currentProcess->isFinished()){
             currentProcess->executeCurrentCommand();
             std::this_thread::sleep_for(std::chrono::milliseconds(100 * (delaysPerExec + 1)));
@@ -90,10 +92,13 @@ void CPUCoreWorker::runProcess() {
         // If process finished during quantum, do not requeue
 
         if (currentProcess && currentProcess->isFinished()) {
-            memoryInstance->deallocate(currentProcess);
-            currentProcess.reset();  // Process finished, reset the pointer
-            assignedProcess = false;
-        }
+          // FIXME: check first which allocator to use
+          if(Scheduler::getInstance()->getOverallMemoryEqualPerFrame()) memoryInstance->deallocate(currentProcess);
+          else Paging::getInstance()->deallocate(currentProcess);
+
+          currentProcess.reset();  // Process finished, reset the pointer
+          assignedProcess = false;
+      }
     }
 }
 

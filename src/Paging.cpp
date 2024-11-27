@@ -1,0 +1,94 @@
+#include "Paging.h"
+
+Paging* Paging::instance = nullptr;
+
+Paging::Paging(){
+ 
+}
+
+Paging::~Paging(){
+  memory.clear();
+  pageTables.clear();
+  freeFrames.clear();
+}
+
+Paging* Paging::getInstance(){
+  return instance;
+}
+
+void Paging::initialize(){
+  instance = new Paging();
+
+  // Get the maximum memory and memory per frame from the config file 
+  unsigned int maxMemory = Config::getInstance()->getMaxMemory();
+  unsigned int memoryPerFrame = Config::getInstance()->getMemoryPerFrame();
+
+  // compute the number of frames
+  instance->maxPages = maxMemory / memoryPerFrame;
+  // initialize memory to -1 for all memory locations
+  instance->memory.resize(instance->maxPages, -1);
+  // initialize the number of free frames 
+  for (int i = 0; i < instance->maxPages; i++) instance->freeFrames.push_back(i);
+}
+
+int Paging::findFreeFrame(){
+  if (freeFrames.empty()) return -1;
+  int frame = freeFrames.back();
+  freeFrames.pop_back();
+  return frame;
+}
+
+size_t Paging::getMaxPages(){
+  return maxPages;
+}
+
+bool Paging::allocate(std::shared_ptr<Process> processToAllocate){
+  int pid = processToAllocate->getPId();
+  int pagesNeeded = processToAllocate->getPagesNeeded();
+
+  // returning false
+  auto it = pageTables.find(pid);
+  if (it != pageTables.end()){
+    return true; // process already in memory
+  }     
+
+  // TODO: Implement backing store swapping here instead of 
+  // Swap the process for the only the oldest process?
+  if (pagesNeeded > freeFrames.size()) return false; // not enough memory
+  
+
+  for (int i = 0; i < pagesNeeded; i++){
+    int frame = findFreeFrame();
+    memory[frame] = pid;
+    pageTables[pid][i] = frame;
+  }
+
+  allocatedSize += pagesNeeded;
+  return true;
+}
+
+void Paging::deallocate(std::shared_ptr<Process> processToDeallocate){
+  int pid = processToDeallocate->getPId();
+  auto it = pageTables.find(pid);
+
+  if (it == pageTables.end()) return; // process not found
+
+  for (auto& page : it->second){
+    memory[page.second] = -1;
+    freeFrames.push_back(page.second);
+  }
+
+  allocatedSize -= it->second.size();
+  pageTables.erase(it);
+}
+
+void Paging::visualizeMemory() {
+    for (size_t i = 0; i < memory.size(); ++i) {
+        std::cout << "Frame " << i << ": ";
+        if (memory[i] == -1) {
+            std::cout << "Free" << std::endl;
+        } else {
+            std::cout << "Process " << memory[i] << std::endl;
+        }
+    }
+}

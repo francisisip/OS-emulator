@@ -4,7 +4,7 @@
 #include "Config.h"
 #include "ResourceManager.h"
 #include "FlatMemoryAllocator.h"
-
+#include "Paging.h"
 #include <iostream>
 
 void tickCPUCycle() {
@@ -24,6 +24,7 @@ int main()
 	ResourceManager::initialize();
 
 	FlatMemoryAllocator::initialize();
+  Paging::initialize();
 
 	std::thread CPUCycleThread(tickCPUCycle);
 	
