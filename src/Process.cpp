@@ -146,3 +146,5 @@ void Process::executeCurrentCommand() {
 void Process::moveToNextLine() {
 	commandCounter++;
 }
+
+int Process::getPagesNeeded() { return pagesNeeded;  } 
