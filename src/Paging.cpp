@@ -92,3 +92,7 @@ void Paging::visualizeMemory() {
         }
     }
 }
+
+
+size_t Paging::getAllocatedSize(){ return allocatedSize; }
+
