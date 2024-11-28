@@ -63,7 +63,8 @@ void CPUCoreWorker::runProcess() {
             std::this_thread::sleep_for(std::chrono::milliseconds(100 * (delaysPerExec + 1)));
             totalCPUTicks++;
         }
-
+          if(Scheduler::getInstance()->getOverallMemoryEqualPerFrame()) memoryInstance->deallocate(currentProcess);
+          else Paging::getInstance()->deallocate(currentProcess);
         currentProcess.reset();
         assignedProcess = false;
 
