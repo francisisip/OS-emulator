@@ -170,6 +170,10 @@ void MenuScreen::handleInput(std::string command) {
 					std::cout << "Error generating report file.\n" << std::endl;
 				}
 			}
+			else if (command == "process-smi") {
+				commandHistory.back() += schedulerInstance->getHighLevelOverview();
+				std::cout << "\n" << schedulerInstance->getHighLevelOverview() << "\n\n";
+			}
 			else if (command == "clear") {
 				commandHistory.clear();
 				system("clear");

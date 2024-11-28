@@ -29,6 +29,7 @@ public:
     void deallocate(std::shared_ptr<Process> processToDeallocate) override;
     void visualizeMemory() override;
     size_t getMaxSize();
+    size_t getAllocatedSize();
 private:
     static FlatMemoryAllocator* instance;
     size_t maxSize;

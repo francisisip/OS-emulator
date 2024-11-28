@@ -133,6 +133,59 @@ std::string Scheduler::getSchedulerStatus() const{
     return string_ls;
 }
 
+std::string Scheduler:: getHighLevelOverview() const {
+    std::string smi_string = "\n";
+    int memoryUsed = (isOverallMemoryEqualPerFrame) ? allocator->getAllocatedSize() : pagingAllocator->getAllocatedSize();
+    int maxMemory = Config::getInstance()->getMaxMemory();
+    double memoryUtilization = (memoryUsed > 0) ? (static_cast<double>(memoryUsed) / maxMemory) * 100 : 0.0;
+    const std::vector<std::shared_ptr<Process>>& processes = this->getProcessList();
+
+    int coresUsed = 0;
+	const std::vector<std::unique_ptr<CPUCoreWorker>>& cores = getCoreList();
+	for (const auto& core : cores) {
+		if (core->hasCurrentProcess()) {
+			coresUsed++;
+		}
+	}
+    int cpuCount = getCoreList().size();
+    double cpuUtilization = (cpuCount > 0) ? (static_cast<double>(coresUsed) / cpuCount) * 100 : 0.0;
+
+    std::ostringstream oss;
+    oss << std::fixed << std::setprecision(2) << cpuUtilization;
+    std::string formattedCPUUtilization = oss.str();
+
+    std::ostringstream oss2;
+    oss2 << std::fixed << std::setprecision(2) << memoryUtilization;
+    std::string formattedMemoryUtilization = oss2.str();
+
+
+    smi_string += "----------------------------------------------\n";            
+    smi_string += "| PROCESS-SMI v01.00 Driver Version: 01.00 |\n";
+    smi_string += "----------------------------------------------\n"; 
+
+    smi_string += "CPU-Util: " + formattedCPUUtilization + "\n";
+    smi_string += "Memory Usage: " + std::to_string(memoryUsed) + "MiB / " + std::to_string(maxMemory) + "MiB" + "\n";
+    smi_string += "Memory-Util: " + formattedMemoryUtilization + "%" + "\n\n";
+
+    smi_string += "==============================================\n";
+    smi_string += "Running processes and memory usage:\n";
+    smi_string += "----------------------------------------------\n"; 
+
+    for (const auto& process : processes) {
+        if (!process->isFinished() && process->getCPUCoreID() != -1) {
+            std::ostringstream oss;
+            oss << std::left << std::setw(20) << process->getName()
+                << std::left << process->getMemoryRequired() << " MiB"
+                << "\n";
+
+            smi_string += oss.str(); 
+        }
+    }
+
+    smi_string += "----------------------------------------------\n"; 
+    return smi_string;
+}
+
 int Scheduler::getAvailableCore() {
     for (auto& core: coreList) {
         if (!core->hasCurrentProcess()) {

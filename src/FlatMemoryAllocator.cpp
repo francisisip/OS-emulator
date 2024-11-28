@@ -51,6 +51,8 @@ bool FlatMemoryAllocator::allocate(std::shared_ptr<Process> processToAllocate) {
         if (origBlockSize > block.end - block.start + 1)
             memory.push_back({ block.start + processMemoryRequired, originalEnd, true });
 
+        allocatedSize += processMemoryRequired;
+
         return true;
     }
     return false;
@@ -64,6 +66,7 @@ void FlatMemoryAllocator::deallocate(std::shared_ptr<Process> processToDeallocat
         if(block.start == it->second){
             block.isFree = true;
             allocationMap.erase(it);
+            allocatedSize -= processToDeallocate->getMemoryRequired();
             mergeFreeBlocks();
             break;
         }
@@ -107,6 +110,9 @@ size_t FlatMemoryAllocator::getMaxSize() {
     return maxSize;
 }
 
+size_t FlatMemoryAllocator::getAllocatedSize() {
+    return allocatedSize;
+}
 
 bool FlatMemoryAllocator::canAllocateAt(int index, size_t size) const {
     return (index + size <= maxSize);

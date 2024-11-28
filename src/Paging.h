@@ -17,6 +17,7 @@ public:
     void visualizeMemory() override;
     int findFreeFrame();
     size_t getMaxPages();
+    size_t getAllocatedSize();
 private:
     static Paging* instance;
     size_t maxPages;
