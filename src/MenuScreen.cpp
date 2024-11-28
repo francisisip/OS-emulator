@@ -88,7 +88,7 @@ void MenuScreen::displayVMStat() {
     size_t freeMemory = maxMemory - usedMemory;
     long long idleCPUTicks = resourceInstance->getIdleCPUTicks();
     long long activeCPUTicks = resourceInstance->getActiveCPUTicks();
-    long long totalCPUTicks = resourceInstance->getTotalCPUTicks();
+    long long totalCPUTicks = idleCPUTicks + activeCPUTicks;
 
     // Define the width for alignment
     const int valueWidth = 15;
