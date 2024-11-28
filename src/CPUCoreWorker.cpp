@@ -93,7 +93,6 @@ void CPUCoreWorker::runProcess() {
                 std::this_thread::sleep_for(std::chrono::milliseconds(100 * (delaysPerExec + 1)));
             } else {
                 currentProcess->resetCycleCount();
-                activeCPUTicks++;
                 totalCPUTicks++;
                 std::this_thread::sleep_for(std::chrono::milliseconds(100 * (delaysPerExec + 1))); 
 
