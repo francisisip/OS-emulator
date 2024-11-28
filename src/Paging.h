@@ -17,11 +17,17 @@ public:
     void visualizeMemory() override;
     int findFreeFrame();
     size_t getMaxPages();
+    void placeIntoBackingStore(std::shared_ptr<Process>);
+
+    int getPageIn();
+    int getPageOut();
 private:
     static Paging* instance;
     size_t maxPages;
     size_t allocatedSize;
     int numFrames;
+    int pagedIn = 0;
+    int pagedOut = 0;
 
     // Physical memory represented as frames.
     // -1 means in a given index means no value
@@ -32,4 +38,5 @@ private:
     std::vector<int> freeFrames; 
 
     std::vector<std::shared_ptr<Process>> allocatedProcessOrder;
+    std::vector<int> backingStore;
 };

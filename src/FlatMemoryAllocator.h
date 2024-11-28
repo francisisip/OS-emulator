@@ -36,6 +36,8 @@ private:
     std::vector<MemoryBlock> memory;
     std::unordered_map<int, size_t> allocationMap;
     std::mutex printMemInfoMutex;
+
+    std::vector<std::shared_ptr<Process>> allocatedProcessOrder;
     
     
     void initializeMemory(size_t maxSize);

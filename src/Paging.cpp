@@ -50,10 +50,8 @@ bool Paging::allocate(std::shared_ptr<Process> processToAllocate){
   auto it = pageTables.find(pid);
   if (it != pageTables.end()){
     return true; // process already in memory
-  }     
+  }   
 
-  // TODO: Implement backing store swapping here instead of 
-  // Swap the process for the only the oldest process?
   
   if (pagesNeeded > freeFrames.size()) {
 
@@ -61,7 +59,7 @@ bool Paging::allocate(std::shared_ptr<Process> processToAllocate){
           std::shared_ptr<Process> process = allocatedProcessOrder[i];
 
           if (process->getState() != Process::RUNNING) {
-              deallocate(process);
+              placeIntoBackingStore(process);
 
               // exit the inner loop
               if (pagesNeeded <= freeFrames.size())
@@ -73,7 +71,14 @@ bool Paging::allocate(std::shared_ptr<Process> processToAllocate){
       if (pagesNeeded > freeFrames.size())
           return false;
   }
-  
+
+  //check if process to be inserted was from backing store
+  auto backStoreIt = std::find(backingStore.begin(), backingStore.end(), pid);
+
+  if (backStoreIt != backingStore.end()) {
+      pagedOut += pagesNeeded;
+      backingStore.erase(backStoreIt);
+  }
 
   for (int i = 0; i < pagesNeeded; i++){
     int frame = findFreeFrame();
@@ -117,4 +122,18 @@ void Paging::visualizeMemory() {
             std::cout << "Process " << memory[i] << std::endl;
         }
     }
+}
+
+void Paging::placeIntoBackingStore(std::shared_ptr<Process> process) {
+    backingStore.push_back(process->getPId());
+    deallocate(process);
+    pagedIn += process->getPagesNeeded();
+}
+
+int Paging::getPageIn() {
+    return pagedIn;
+}
+
+int Paging::getPageOut() {
+    return pagedOut;
 }
