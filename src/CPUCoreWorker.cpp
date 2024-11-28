@@ -8,6 +8,9 @@
 CPUCoreWorker::CPUCoreWorker(int coreId){
     this->coreId = coreId;
     assignedProcess = false;
+    totalCPUTicks = 0;
+    activeCPUTicks = 0;
+    idleCPUTicks = 0;
 }
 
 CPUCoreWorker::~CPUCoreWorker() {
@@ -32,14 +35,20 @@ int CPUCoreWorker::getCoreId() {
 }
 
 void CPUCoreWorker::runCoreWorker(){
-    while(true){
-        if(assignedProcess && currentProcess){
+    Config* currentConfig = Config::getInstance();
+    unsigned int delaysPerExec = currentConfig->getDelaysPerExec();
+
+    while(true) {
+        // ITS RUNNING
+        if (assignedProcess && currentProcess)
             runProcess();
-            // ITS RUNNING
+        else {      
+            // ITS IDLE
+            idleCPUTicks++;
+            // Also update total cpu ticks;
+            totalCPUTicks++;
+            std::this_thread::sleep_for(std::chrono::milliseconds(100 * (delaysPerExec + 1)));
         }
-        // ITS IDLE
-        totalCPUTicks++;
-        // sleep based off CPU Cycle delay
     }
 }
 
@@ -61,6 +70,9 @@ void CPUCoreWorker::runProcess() {
         while(!currentProcess->isFinished()){
             currentProcess->executeCurrentCommand();
             std::this_thread::sleep_for(std::chrono::milliseconds(100 * (delaysPerExec + 1)));
+            
+            // Update both total and active CPU Ticks
+            activeCPUTicks++;
             totalCPUTicks++;
         }
 
@@ -76,6 +88,7 @@ void CPUCoreWorker::runProcess() {
             if (processCycles < quantumCycles) {
                 currentProcess->executeCurrentCommand();
                 currentProcess->incrementCycleCount();
+                activeCPUTicks++;
                 totalCPUTicks++;
                 std::this_thread::sleep_for(std::chrono::milliseconds(100 * (delaysPerExec + 1)));
             } else {
@@ -102,6 +115,10 @@ void CPUCoreWorker::runProcess() {
     }
 }
 
+std::shared_ptr<Process> CPUCoreWorker::getCurrentProcess() {
+    return currentProcess;
+}
+
 void CPUCoreWorker::setCurrentProcess(std::shared_ptr<Process> process){
     std::lock_guard<std::mutex> lock(coreMutex);
     currentProcess = process;
@@ -111,6 +128,18 @@ void CPUCoreWorker::setCurrentProcess(std::shared_ptr<Process> process){
 bool CPUCoreWorker::hasCurrentProcess(){
     std::lock_guard<std::mutex> lock(coreMutex);
     return assignedProcess;
+}
+
+long long CPUCoreWorker::getTotalCPUTicks() {
+    return totalCPUTicks;
+}
+
+long long CPUCoreWorker::getActiveCPUTicks() {
+    return activeCPUTicks;
+}
+
+long long CPUCoreWorker::getIdleCPUTicks() {
+    return idleCPUTicks;
 }
 
 void CPUCoreWorker::stop() {

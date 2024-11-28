@@ -17,10 +17,13 @@ public:
     // spam add process with Scheduler::addProcess. 
     void schedulerTestStart();
     bool startSchedulerInThread();
-    bool schedulerTestStop(); // this is the scheduler-stop command. sounds weird so I just made it test stop
     void initializeScheduler();
-
-
+    bool schedulerTestStop(); // this is the scheduler-stop command. sounds weird so I just made it test stop
+    long long getTotalCPUTicks();
+    long long getActiveCPUTicks();
+    long long getIdleCPUTicks();
+    size_t getActiveMemory(); // gets memory currently being used
+    
 
 private:
    static ResourceManager* instance;
