@@ -81,25 +81,22 @@ void ProcessScreen::handleInput(std::string command) {
 
     if (wordCount == 1) {
         if (command == "process-smi") {
-            if (command == "process-smi") {
-                std::string smi_string = "\n";
+            std::string smi_string = "\n";
 
-                smi_string += "Process: " + currentProcess->getName() + "\n";
-                smi_string += "ID: " + std::to_string(currentProcess->getPId()) + "\n";
-                smi_string += "\n";
+            smi_string += "Process: " + currentProcess->getName() + "\n";
+            smi_string += "ID: " + std::to_string(currentProcess->getPId()) + "\n";
+            smi_string += "\n";
 
-                if (currentProcess->getState() != Process::ProcessState::FINISHED) {
-                    smi_string += "Current instruction line: " + std::to_string(currentProcess->getCommandCounter()) + "\n";
-                    smi_string += "Lines of Code: " + std::to_string(currentProcess->getCommandCount());
-                } else {
-                    smi_string += "Finished!";
-                }
-
-                std::cout << smi_string; 
-                std::cout << "\n\n";
-                commandHistory.back() += "\n" + smi_string;
+            if (currentProcess->getState() != Process::ProcessState::FINISHED) {
+                smi_string += "Current instruction line: " + std::to_string(currentProcess->getCommandCounter()) + "\n";
+                smi_string += "Lines of Code: " + std::to_string(currentProcess->getCommandCount());
+            } else {
+                smi_string += "Finished!";
             }
 
+            std::cout << smi_string; 
+            std::cout << "\n\n";
+            commandHistory.back() += "\n" + smi_string;\
         }
         else if (command == "clear") {
             commandHistory.clear();

@@ -26,6 +26,7 @@ public:
     void setSchedulerAlgorithm(std::string algorithm);
     void setQuantumCycles(unsigned int cycles);
     std::string getSchedulerStatus() const;
+    std::string getHighLevelOverview() const;
     bool getOverallMemoryEqualPerFrame();
 
 private:

@@ -63,7 +63,7 @@ bool Paging::allocate(std::shared_ptr<Process> processToAllocate){
     pageTables[pid][i] = frame;
   }
 
-  allocatedSize += pagesNeeded;
+  allocatedSize += processToAllocate->getMemoryRequired();
   return true;
 }
 
@@ -78,7 +78,7 @@ void Paging::deallocate(std::shared_ptr<Process> processToDeallocate){
     freeFrames.push_back(page.second);
   }
 
-  allocatedSize -= it->second.size();
+  allocatedSize -= processToDeallocate->getMemoryRequired();
   pageTables.erase(it);
 }
 
