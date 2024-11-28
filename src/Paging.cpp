@@ -54,7 +54,25 @@ bool Paging::allocate(std::shared_ptr<Process> processToAllocate){
 
   // TODO: Implement backing store swapping here instead of 
   // Swap the process for the only the oldest process?
-  if (pagesNeeded > freeFrames.size()) return false; // not enough memory
+  
+  if (pagesNeeded > freeFrames.size()) {
+
+      for (size_t i = 0; i < allocatedProcessOrder.size(); ++i) {
+          std::shared_ptr<Process> process = allocatedProcessOrder[i];
+
+          if (process->getState() != Process::RUNNING) {
+              deallocate(process);
+
+              // exit the inner loop
+              if (pagesNeeded <= freeFrames.size())
+                  break;
+          }
+      }
+
+      // cannot free up enough frames for the new process, return false
+      if (pagesNeeded > freeFrames.size())
+          return false;
+  }
   
 
   for (int i = 0; i < pagesNeeded; i++){
@@ -64,6 +82,7 @@ bool Paging::allocate(std::shared_ptr<Process> processToAllocate){
   }
 
   allocatedSize += pagesNeeded;
+  allocatedProcessOrder.push_back(processToAllocate);
   return true;
 }
 
@@ -80,6 +99,13 @@ void Paging::deallocate(std::shared_ptr<Process> processToDeallocate){
 
   allocatedSize -= it->second.size();
   pageTables.erase(it);
+
+  //remove the process in the allocated order queue
+  auto index = std::find(allocatedProcessOrder.begin(), allocatedProcessOrder.end(), processToDeallocate);
+  if (index != allocatedProcessOrder.end()) {
+      allocatedProcessOrder.erase(index); 
+  }
+
 }
 
 void Paging::visualizeMemory() {

@@ -30,4 +30,6 @@ private:
     std::unordered_map<int, std::unordered_map<int, int>> pageTables; // Map of process ID to page table.
     // List of free frames.
     std::vector<int> freeFrames; 
+
+    std::vector<std::shared_ptr<Process>> allocatedProcessOrder;
 };
