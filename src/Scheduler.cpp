@@ -172,7 +172,7 @@ std::string Scheduler:: getHighLevelOverview() const {
     smi_string += "----------------------------------------------\n"; 
 
     for (const auto& process : processes) {
-        if (!process->isFinished()) {
+        if (!process->isFinished() && process->getCPUCoreID() != -1) {
             std::ostringstream oss;
             oss << std::left << std::setw(20) << process->getName()
                 << std::left << std::setw(30) << process->getMemoryRequired()
