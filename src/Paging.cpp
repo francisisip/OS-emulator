@@ -94,6 +94,27 @@ bool Paging::allocate(std::shared_ptr<Process> processToAllocate) {
         if (backStoreIt != backingStore.end()) {
             pagedOut += pagesNeeded;
             backingStore.erase(backStoreIt);
+
+            // Remove the process from the backing store file
+            std::ifstream backingStoreFile("backing_store.txt");
+            std::ofstream tempFile("temp.txt");
+            if (backingStoreFile.is_open() && tempFile.is_open()) {
+                std::string line;
+                while (std::getline(backingStoreFile, line)) {
+                    std::istringstream iss(line);
+                    std::string pId;
+                    iss >> pId;
+                    if (std::stoi(pId) != pid) {
+                        tempFile << line << std::endl;
+                    }
+                }
+                backingStoreFile.close();
+                tempFile.close();
+                std::remove("backing_store.txt");
+                std::rename("temp.txt", "backing_store.txt");
+            } else {
+                std::cerr << "Error: Unable to open backing_store.txt for reading.\n";
+            }
         }
     }
 
@@ -149,6 +170,17 @@ void Paging::placeIntoBackingStore(std::shared_ptr<Process> process) {
         backingStore.push_back(process->getPId());
     }
 
+    
+    //write into file
+    {
+        std::ofstream backingStoreFile("backing_store.txt", std::ios::app); // Open in append mode
+        if (backingStoreFile.is_open()) {
+            backingStoreFile << process->getPId() << ", " << process->getCommandCounter() << "\n";
+        } else {
+            std::cerr << "Error: Unable to open backing_store.txt for writing.\n";
+        }
+    }
+
     // Call deallocate outside the mutex lock
     deallocate(process);
 
@@ -157,7 +189,6 @@ void Paging::placeIntoBackingStore(std::shared_ptr<Process> process) {
         pagedIn += process->getPagesNeeded();
     }
 }
-
 
 int Paging::getPageIn() {
     return pagedIn;

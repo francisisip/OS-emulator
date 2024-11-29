@@ -6,3 +6,4 @@ main
 .DS_Store
 .vs
 memory_stamps
+/src/backing_store.txt
