@@ -72,7 +72,7 @@ bool Paging::allocate(std::shared_ptr<Process> processToAllocate){
       // cannot free up enough frames for the new process, return false
       if (pagesNeeded > freeFrames.size())
           return false;
-  }
+  
   }
   //check if process to be inserted was from backing store
   auto backStoreIt = std::find(backingStore.begin(), backingStore.end(), pid);
@@ -87,7 +87,7 @@ bool Paging::allocate(std::shared_ptr<Process> processToAllocate){
     memory[frame] = pid;
     pageTables[pid][i] = frame;
   }
-
+  }
   allocatedSize += processToAllocate->getMemoryRequired();
   allocatedProcessOrder.push_back(processToAllocate);
   return true;
