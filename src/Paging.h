@@ -18,11 +18,16 @@ public:
     int findFreeFrame();
     size_t getMaxPages();
     size_t getAllocatedSize();
+    void placeIntoBackingStore(std::shared_ptr<Process>);
+    int getPageIn();
+    int getPageOut();
 private:
     static Paging* instance;
     size_t maxPages;
     size_t allocatedSize;
     int numFrames;
+    int pagedIn = 0;
+    int pagedOut = 0;
 
     // Physical memory represented as frames.
     // -1 means in a given index means no value
@@ -31,4 +36,7 @@ private:
     std::unordered_map<int, std::unordered_map<int, int>> pageTables; // Map of process ID to page table.
     // List of free frames.
     std::vector<int> freeFrames; 
+
+    std::vector<std::shared_ptr<Process>> allocatedProcessOrder;
+    std::vector<int> backingStore;
 };

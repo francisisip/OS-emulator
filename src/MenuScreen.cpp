@@ -2,6 +2,7 @@
 #include <string>
 #include <cstdio>
 #include <sstream>
+#include <iomanip> 
 
 #include "MenuScreen.h"
 #include "ConsoleManager.h"
@@ -9,10 +10,12 @@
 #include "Scheduler.h"
 #include "ResourceManager.h"
 #include "FlatMemoryAllocator.h"
+#include "Config.h"
 
 ConsoleManager* instance;
 Scheduler* schedulerInstance;
 ResourceManager* resourceInstance;
+Config* configInstance;
 
 MenuScreen::MenuScreen(): AConsole("MAIN_MENU") {
 	this->isInitialized = false;
@@ -35,6 +38,7 @@ void MenuScreen::onExecute() {
 	instance = ConsoleManager::getInstance();
 	schedulerInstance = Scheduler::getInstance();
 	resourceInstance = ResourceManager::getInstance();
+	configInstance = Config::getInstance();
 	display();
 	process();
 }
@@ -75,6 +79,48 @@ void MenuScreen::displayASCII() {
 
 	std::cout << "Hello, welcome to CSOPESY commandline!" << '\n';
 	std::cout << "Type 'exit' to quit, 'clear' to clear the screen\n" << '\n';
+}
+
+
+void MenuScreen::displayVMStat() {
+    size_t maxMemory = configInstance->getMaxMemory();
+    size_t usedMemory = resourceInstance->getActiveMemory();
+    size_t freeMemory = maxMemory - usedMemory;
+    long long idleCPUTicks = resourceInstance->getIdleCPUTicks();
+    long long activeCPUTicks = resourceInstance->getActiveCPUTicks();
+    long long totalCPUTicks = idleCPUTicks + activeCPUTicks;
+
+    // Define the width for alignment
+    const int valueWidth = 15;
+    const int labelWidth = 20;
+
+    std::cout << std::endl;
+    std::cout << std::setw(valueWidth) << maxMemory 
+              << " " << std::setw(labelWidth) << "KB total memory" << std::endl;
+
+    std::cout << std::setw(valueWidth) << usedMemory 
+              << " " << std::setw(labelWidth) << "KB used memory" << std::endl;
+
+    std::cout << std::setw(valueWidth) << freeMemory 
+              << " " << std::setw(labelWidth) << "KB free memory" << std::endl;
+
+    std::cout << std::setw(valueWidth) << idleCPUTicks 
+              << " " << std::setw(labelWidth) << "idle cpu ticks" << std::endl;
+
+    std::cout << std::setw(valueWidth) << activeCPUTicks 
+              << " " << std::setw(labelWidth) << "active cpu ticks" << std::endl;
+
+    std::cout << std::setw(valueWidth) << totalCPUTicks 
+              << " " << std::setw(labelWidth) << "total cpu ticks" << std::endl;
+
+	// TODO: Replace placeholders fo paged-in values.
+    std::cout << std::setw(valueWidth) << 0 
+              << " " << std::setw(labelWidth) << "pages paged in" << std::endl;
+
+    std::cout << std::setw(valueWidth) << 0 
+              << " " << std::setw(labelWidth) << "pages paged out" << std::endl;
+
+    std::cout << std::endl;
 }
 
 void MenuScreen::handleInput(std::string command) {
@@ -153,6 +199,8 @@ void MenuScreen::handleInput(std::string command) {
 					commandHistory.back() += "\nscheduler-test is not running, there is nothing to stop.";
 					std::cout << "scheduler-test is not running, there is nothing to stop.\n" << std::endl;
 				}
+			} else if (command == "vm-stat") {
+				displayVMStat();
 			}
 			else if (command == "report-util") {
 				std::ofstream outFile("csopesy-log.txt");

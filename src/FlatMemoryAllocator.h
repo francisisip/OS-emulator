@@ -37,9 +37,13 @@ private:
     std::vector<MemoryBlock> memory;
     std::unordered_map<int, size_t> allocationMap;
     std::mutex printMemInfoMutex;
+
+    std::vector<std::shared_ptr<Process>> allocatedProcessOrder;
+    std::vector<int> backingStore;
     
     
     void initializeMemory(size_t maxSize);
     bool canAllocateAt(int index, size_t size) const;
     void mergeFreeBlocks();
+    void placeIntoBackingStore(std::shared_ptr<Process>);
 };

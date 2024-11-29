@@ -50,12 +50,35 @@ bool Paging::allocate(std::shared_ptr<Process> processToAllocate){
   auto it = pageTables.find(pid);
   if (it != pageTables.end()){
     return true; // process already in memory
-  }     
+  }   
 
-  // TODO: Implement backing store swapping here instead of 
-  // Swap the process for the only the oldest process?
-  if (pagesNeeded > freeFrames.size()) return false; // not enough memory
   
+  if (pagesNeeded > freeFrames.size()) {
+
+      for (size_t i = 0; i < allocatedProcessOrder.size(); ++i) {
+          std::shared_ptr<Process> process = allocatedProcessOrder[i];
+
+          if (process != nullptr && process->getCPUCoreID() == -1){ 
+              placeIntoBackingStore(process);
+
+              // exit the inner loop
+              if (pagesNeeded <= freeFrames.size())
+                  break;
+          }
+      }
+
+      // cannot free up enough frames for the new process, return false
+      if (pagesNeeded > freeFrames.size())
+          return false;
+  }
+
+  //check if process to be inserted was from backing store
+  auto backStoreIt = std::find(backingStore.begin(), backingStore.end(), pid);
+
+  if (backStoreIt != backingStore.end()) {
+      pagedOut += pagesNeeded;
+      backingStore.erase(backStoreIt);
+  }
 
   for (int i = 0; i < pagesNeeded; i++){
     int frame = findFreeFrame();
@@ -64,6 +87,7 @@ bool Paging::allocate(std::shared_ptr<Process> processToAllocate){
   }
 
   allocatedSize += processToAllocate->getMemoryRequired();
+  allocatedProcessOrder.push_back(processToAllocate);
   return true;
 }
 
@@ -80,6 +104,13 @@ void Paging::deallocate(std::shared_ptr<Process> processToDeallocate){
 
   allocatedSize -= processToDeallocate->getMemoryRequired();
   pageTables.erase(it);
+
+  //remove the process in the allocated order queue
+  auto index = std::find(allocatedProcessOrder.begin(), allocatedProcessOrder.end(), processToDeallocate);
+  if (index != allocatedProcessOrder.end()) {
+      allocatedProcessOrder.erase(index); 
+  }
+
 }
 
 void Paging::visualizeMemory() {
@@ -96,3 +127,16 @@ void Paging::visualizeMemory() {
 
 size_t Paging::getAllocatedSize(){ return allocatedSize; }
 
+void Paging::placeIntoBackingStore(std::shared_ptr<Process> process) {
+    backingStore.push_back(process->getPId());
+    deallocate(process);
+    pagedIn += process->getPagesNeeded();
+}
+
+int Paging::getPageIn() {
+    return pagedIn;
+}
+
+int Paging::getPageOut() {
+    return pagedOut;
+}

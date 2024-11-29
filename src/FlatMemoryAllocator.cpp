@@ -53,7 +53,22 @@ bool FlatMemoryAllocator::allocate(std::shared_ptr<Process> processToAllocate) {
 
         allocatedSize += processMemoryRequired;
 
+        //keep track of oldest process in memory
+        allocatedProcessOrder.push_back(processToAllocate);
         return true;
+    }
+
+    // move processes into backing store
+    for (size_t i = 0; i < allocatedProcessOrder.size(); ++i) {
+        std::shared_ptr<Process> process = allocatedProcessOrder[i];
+
+        if (process != nullptr && process->getCPUCoreID() == -1) {
+            placeIntoBackingStore(process);
+
+            // check if process can now be allocated
+            if (allocate(processToAllocate))
+                return true;
+        }
     }
     return false;
 }
@@ -70,6 +85,11 @@ void FlatMemoryAllocator::deallocate(std::shared_ptr<Process> processToDeallocat
             mergeFreeBlocks();
             break;
         }
+    }
+
+    auto index = std::find(allocatedProcessOrder.begin(), allocatedProcessOrder.end(), processToDeallocate);
+    if (index != allocatedProcessOrder.end()) {
+        allocatedProcessOrder.erase(index);
     }
 }
 
@@ -126,4 +146,9 @@ std::string getPrintTime() {
     ss << (localTime->tm_hour >= 12 ? "PM" : "AM");
 
     return ss.str();
+}
+
+void FlatMemoryAllocator::placeIntoBackingStore(std::shared_ptr<Process> process) {
+    backingStore.push_back(process->getPId());
+    deallocate(process);
 }
