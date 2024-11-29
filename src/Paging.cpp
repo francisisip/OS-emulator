@@ -58,7 +58,7 @@ bool Paging::allocate(std::shared_ptr<Process> processToAllocate){
       for (size_t i = 0; i < allocatedProcessOrder.size(); ++i) {
           std::shared_ptr<Process> process = allocatedProcessOrder[i];
 
-          if (process->getState() != Process::RUNNING) {
+          if (process->getCPUCoreID() == -1){ 
               placeIntoBackingStore(process);
 
               // exit the inner loop
