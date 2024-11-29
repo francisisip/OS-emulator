@@ -43,6 +43,8 @@ size_t Paging::getMaxPages(){
 }
 
 bool Paging::allocate(std::shared_ptr<Process> processToAllocate){
+  { 
+   std::lock_guard<std::mutex> lock(allocationMutex); 
   int pid = processToAllocate->getPId();
   int pagesNeeded = processToAllocate->getPagesNeeded();
 
@@ -71,7 +73,7 @@ bool Paging::allocate(std::shared_ptr<Process> processToAllocate){
       if (pagesNeeded > freeFrames.size())
           return false;
   }
-
+  }
   //check if process to be inserted was from backing store
   auto backStoreIt = std::find(backingStore.begin(), backingStore.end(), pid);
 
@@ -92,19 +94,21 @@ bool Paging::allocate(std::shared_ptr<Process> processToAllocate){
 }
 
 void Paging::deallocate(std::shared_ptr<Process> processToDeallocate){
-  int pid = processToDeallocate->getPId();
-  auto it = pageTables.find(pid);
+  { 
+      std::lock_guard<std::mutex> lock(allocationMutex); 
+      int pid = processToDeallocate->getPId();
+      auto it = pageTables.find(pid);
 
-  if (it == pageTables.end()) return; // process not found
+      if (it == pageTables.end()) return; // process not found
 
-  for (auto& page : it->second){
-    memory[page.second] = -1;
-    freeFrames.push_back(page.second);
+      for (auto& page : it->second){
+        memory[page.second] = -1;
+        freeFrames.push_back(page.second);
+      }
+
+      allocatedSize -= processToDeallocate->getMemoryRequired();
+      pageTables.erase(it);
   }
-
-  allocatedSize -= processToDeallocate->getMemoryRequired();
-  pageTables.erase(it);
-
   //remove the process in the allocated order queue
   auto index = std::find(allocatedProcessOrder.begin(), allocatedProcessOrder.end(), processToDeallocate);
   if (index != allocatedProcessOrder.end()) {
