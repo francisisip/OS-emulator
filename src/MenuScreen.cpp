@@ -90,6 +90,8 @@ void MenuScreen::displayVMStat() {
     long long activeCPUTicks = resourceInstance->getActiveCPUTicks();
     long long totalCPUTicks = idleCPUTicks + activeCPUTicks;
 
+    size_t pagedIn = Paging::getInstance()->getPageIn() + FlatMemoryAllocator::getInstance()->getPagedIn();
+    size_t pagedOut = Paging::getInstance()->getPageOut() + FlatMemoryAllocator::getInstance()->getPagedOut();
     // Define the width for alignment
     const int valueWidth = 15;
     const int labelWidth = 20;
@@ -114,10 +116,10 @@ void MenuScreen::displayVMStat() {
               << " " << std::setw(labelWidth) << "total cpu ticks" << std::endl;
 
 	// TODO: Replace placeholders fo paged-in values.
-    std::cout << std::setw(valueWidth) << 0 
+    std::cout << std::setw(valueWidth) << pagedIn
               << " " << std::setw(labelWidth) << "pages paged in" << std::endl;
 
-    std::cout << std::setw(valueWidth) << 0 
+    std::cout << std::setw(valueWidth) << pagedOut 
               << " " << std::setw(labelWidth) << "pages paged out" << std::endl;
 
     std::cout << std::endl;
@@ -199,7 +201,7 @@ void MenuScreen::handleInput(std::string command) {
 					commandHistory.back() += "\nscheduler-test is not running, there is nothing to stop.";
 					std::cout << "scheduler-test is not running, there is nothing to stop.\n" << std::endl;
 				}
-			} else if (command == "vm-stat") {
+			} else if (command == "vmstat") {
 				displayVMStat();
 			}
 			else if (command == "report-util") {
