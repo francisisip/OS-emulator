@@ -36,7 +36,7 @@ public:
 private:
     static FlatMemoryAllocator* instance;
     size_t maxSize;
-    size_t allocatedSize;
+    size_t allocatedSize = 0;
     int pagedIn = 0;
     int pagedOut = 0;
     std::vector<MemoryBlock> memory;

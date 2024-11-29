@@ -135,7 +135,9 @@ std::string Scheduler::getSchedulerStatus() const{
 
 std::string Scheduler:: getHighLevelOverview() const {
     std::string smi_string = "\n";
-    int memoryUsed = (isOverallMemoryEqualPerFrame) ? allocator->getAllocatedSize() : pagingAllocator->getAllocatedSize();
+    int memoryUsed;
+    if (isOverallMemoryEqualPerFrame) memoryUsed = allocator->getAllocatedSize();
+    else memoryUsed =  pagingAllocator->getAllocatedSize();
     int maxMemory = Config::getInstance()->getMaxMemory();
     double memoryUtilization = (memoryUsed > 0) ? (static_cast<double>(memoryUsed) / maxMemory) * 100 : 0.0;
     const std::vector<std::shared_ptr<Process>>& processes = this->getProcessList();

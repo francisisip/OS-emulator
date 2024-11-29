@@ -25,7 +25,7 @@ public:
 private:
     static Paging* instance;
     size_t maxPages;
-    size_t allocatedSize;
+    size_t allocatedSize = 0;
     int numFrames;
     int pagedIn = 0;
     int pagedOut = 0;
