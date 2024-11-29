@@ -75,7 +75,8 @@ void CPUCoreWorker::runProcess() {
             activeCPUTicks++;
             totalCPUTicks++;
         }
-
+          if(Scheduler::getInstance()->getOverallMemoryEqualPerFrame()) memoryInstance->deallocate(currentProcess);
+          else Paging::getInstance()->deallocate(currentProcess);
         currentProcess.reset();
         assignedProcess = false;
 
