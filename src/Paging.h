@@ -1,6 +1,7 @@
 #pragma once
 #include "IMemoryAllocator.h"
 #include <memory>
+#include <mutex>
 #include <unordered_map>
 #include "Process.h"
 #include "Config.h"
@@ -28,7 +29,7 @@ private:
     int numFrames;
     int pagedIn = 0;
     int pagedOut = 0;
-
+    std::mutex allocationMutex;
     // Physical memory represented as frames.
     // -1 means in a given index means no value
     std::vector<int> memory; 
