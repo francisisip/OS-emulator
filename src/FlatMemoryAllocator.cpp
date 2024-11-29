@@ -30,7 +30,8 @@ void FlatMemoryAllocator::initializeMemory(size_t maxSize) {
 
 // Implements first-fit approach by default for now.
 bool FlatMemoryAllocator::allocate(std::shared_ptr<Process> processToAllocate) {
-    
+  { 
+   std::lock_guard<std::mutex> lock(allocationMutex); 
     // if PID is in memory, return true
     auto it = allocationMap.find(processToAllocate->getPId());
     if (it != allocationMap.end()) return true;
@@ -64,6 +65,7 @@ bool FlatMemoryAllocator::allocate(std::shared_ptr<Process> processToAllocate) {
         }
         return true;
     }
+}
 
     // move processes into backing store
     for (size_t i = 0; i < allocatedProcessOrder.size(); ++i) {
@@ -81,6 +83,8 @@ bool FlatMemoryAllocator::allocate(std::shared_ptr<Process> processToAllocate) {
 }
 
 void FlatMemoryAllocator::deallocate(std::shared_ptr<Process> processToDeallocate) {
+  {
+  std::lock_guard<std::mutex> lock(allocationMutex);
     auto it = allocationMap.find(processToDeallocate->getPId());
     if (it == allocationMap.end()) return;
 
@@ -93,7 +97,7 @@ void FlatMemoryAllocator::deallocate(std::shared_ptr<Process> processToDeallocat
             break;
         }
     }
-
+  }
     auto index = std::find(allocatedProcessOrder.begin(), allocatedProcessOrder.end(), processToDeallocate);
     if (index != allocatedProcessOrder.end()) {
         allocatedProcessOrder.erase(index);

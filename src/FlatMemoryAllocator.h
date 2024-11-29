@@ -41,7 +41,7 @@ private:
     int pagedOut = 0;
     std::vector<MemoryBlock> memory;
     std::unordered_map<int, size_t> allocationMap;
-    std::mutex printMemInfoMutex;
+    std::mutex allocationMutex;
 
     std::vector<std::shared_ptr<Process>> allocatedProcessOrder;
     std::vector<int> backingStore;
