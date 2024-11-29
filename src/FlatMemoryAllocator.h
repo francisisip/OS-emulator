@@ -30,10 +30,15 @@ public:
     void visualizeMemory() override;
     size_t getMaxSize();
     size_t getAllocatedSize();
+    int getPagedIn();
+    int getPagedOut();
+
 private:
     static FlatMemoryAllocator* instance;
     size_t maxSize;
     size_t allocatedSize;
+    int pagedIn = 0;
+    int pagedOut = 0;
     std::vector<MemoryBlock> memory;
     std::unordered_map<int, size_t> allocationMap;
     std::mutex printMemInfoMutex;
@@ -41,7 +46,7 @@ private:
     std::vector<std::shared_ptr<Process>> allocatedProcessOrder;
     std::vector<int> backingStore;
     
-    
+
     void initializeMemory(size_t maxSize);
     bool canAllocateAt(int index, size_t size) const;
     void mergeFreeBlocks();

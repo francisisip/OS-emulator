@@ -55,6 +55,13 @@ bool FlatMemoryAllocator::allocate(std::shared_ptr<Process> processToAllocate) {
 
         //keep track of oldest process in memory
         allocatedProcessOrder.push_back(processToAllocate);
+        
+        //check if process to be inserted was from backing store
+        auto backStoreIt = std::find(backingStore.begin(), backingStore.end(), processToAllocate->getPId());
+        if (backStoreIt != backingStore.end()) {
+            pagedOut += processToAllocate->getPagesNeeded();
+            backingStore.erase(backStoreIt);
+        }
         return true;
     }
 
@@ -151,4 +158,9 @@ std::string getPrintTime() {
 void FlatMemoryAllocator::placeIntoBackingStore(std::shared_ptr<Process> process) {
     backingStore.push_back(process->getPId());
     deallocate(process);
+    pagedIn += process->getPagesNeeded();
 }
+
+
+int FlatMemoryAllocator::getPagedIn(){ return pagedIn; }
+int FlatMemoryAllocator::getPagedOut(){ return pagedOut; }
